@@ -1,0 +1,90 @@
+.b-axis
+{
+    cursor: default;
+    font: 70%/100% Arial,sans-serif;
+    position: relative;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.b-axis__value,
+.b-axis__label,
+.b-axis__tick
+{
+    position: absolute;
+}
+
+
+.b-axis_pos_top,
+.b-axis_pos_bottom
+{
+    height: 100%;
+    overflow: hidden;
+}
+
+.b-axis_pos_top .b-axis__value
+{
+    bottom: 0;
+}
+.b-axis_pos_bottom .b-axis__value {
+    top: 0;
+}
+
+.b-axis_pos_top .b-axis__label,
+.b-axis_pos_bottom .b-axis__label
+{
+    left: -100px;
+    overflow: hidden;
+    text-align: center;
+    width: 200px;
+}
+.b-axis_pos_top .b-axis__label { bottom: 7px }
+.b-axis_pos_bottom .b-axis__label { top: 7px }
+
+.b-axis_pos_top .b-axis__tick,
+.b-axis_pos_bottom .b-axis__tick
+{
+    border-left: 1px solid #000;
+    height: 5px;
+}
+.b-axis_pos_top .b-axis__tick { bottom: 0 }
+.b-axis_pos_bottom .b-axis__tick { top: 0 }
+
+
+.b-axis_pos_left .b-axis__value,
+.b-axis_pos_right .b-axis__value
+{
+    left: 0;
+    right: 0;
+}
+
+.b-axis_pos_left .b-axis__label,
+.b-axis_pos_right .b-axis__label
+{
+    bottom: -0.5em;
+    overflow: hidden;
+}
+
+.b-axis_pos_left .b-axis__label
+{
+    left: 0;
+    right: 7px;
+    text-align: right;
+}
+
+.b-axis_pos_right .b-axis__label
+{
+    left: 7px;
+    right: 0;
+    text-align: left;
+}
+
+.b-axis_pos_left .b-axis__tick,
+.b-axis_pos_right .b-axis__tick
+{
+    border-top: 1px solid #000;
+    width: 5px;
+}
+.b-axis_pos_left .b-axis__tick { right: 0 }
+.b-axis_pos_right .b-axis__tick { left: 0 }

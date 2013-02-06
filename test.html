@@ -4,19 +4,29 @@
 <head>
 <meta charset="utf-8">
 <title>Vis.js</title>
+<link rel="stylesheet" type="text/css" href="b-axis.css">
 <script src="http://yandex.st/jquery/1.9.1/jquery.min.js"></script>
 <script src="core.js"></script>
 <script src="b-axis.js"></script>
 <script>
 $(function() {
-    Vis($('.b-axis'), 'b-axis').update();
+    Vis($('.b-axis'), 'b-axis')
+        .update('bottom', [
+            { offset: 0, label: '0' },
+            { offset: 100, label: '100' },
+            { offset: 200, label: '200' },
+            { offset: 300, label: '300' },
+            { offset: 400, label: '400' },
+            { offset: 499, label: '499' }
+        ]);
 });
 </script>
 </head>
 
 <body>
 <h1>Vis.js</h1>
-<div class="b-axis"></div>
+<div style="background: #99f; height: 200px; width: 500px"></div>
+<div style="height: 1.2em; width: 500px;"><div class="b-axis"></div></div>
 </body>
 
 </html>

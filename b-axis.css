@@ -27,7 +27,8 @@
 {
     bottom: 0;
 }
-.b-axis_pos_bottom .b-axis__value {
+.b-axis_pos_bottom .b-axis__value
+{
     top: 0;
 }
 

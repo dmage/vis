@@ -1,0 +1,16 @@
+.b-9
+{
+    border-collapse: collapse;
+}
+
+.b-9__tl, .b-9__tc, .b-9__tr,
+.b-9__ml, .b-9__mc, .b-9__mr,
+.b-9__bl, .b-9__bc, .b-9__br
+{
+    padding: 0;
+}
+
+.b-9__mc
+{
+    width: 100%;
+}

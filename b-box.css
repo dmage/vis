@@ -1,0 +1,8 @@
+.b-box
+{
+    background: #ccc;
+    border: 1px solid #666;
+    display: block;
+    width: 100px;
+    height: 100px;
+}

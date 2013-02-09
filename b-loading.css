@@ -1,0 +1,52 @@
+.b-loading
+{
+    display: inline-block;
+    height: 50px;
+    left: 50%;
+    margin: -25px 0 0 -50px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 100px;
+}
+
+.b-loading__bar
+{
+    background: #666;
+    display: inline-block;
+    height: 50px;
+    margin: 0 5px;
+    opacity: 0.5;
+    width: 20px;
+
+    -moz-animation-name: loading;
+    -moz-animation-duration: 1.2s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-direction: linear;
+}
+
+.b-loading__bar:nth-child(1)
+{
+    -moz-animation-delay:0.24s;
+}
+
+.b-loading__bar:nth-child(2)
+{
+    -moz-animation-delay:0.48s;
+}
+
+.b-loading__bar:nth-child(3)
+{
+    -moz-animation-delay:0.72s;
+}
+
+@-moz-keyframes loading {
+    0% {
+        -moz-transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        -moz-transform: scale(0.7);
+        opacity: 0.5;
+    }
+}

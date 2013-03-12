@@ -20,7 +20,9 @@ Vis.fn = Vis.prototype = {
         }
 
         var v = Object.create(Vis.blocks[block]);
-        v.init(obj, block);
+        if (typeof v.init !== 'undefined') {
+            v.init(obj, block);
+        }
         return v;
     },
 

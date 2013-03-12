@@ -15,6 +15,8 @@
 <script src="blocks/b-axis/b-axis.js"></script>
 <script src="blocks/b-1.js"></script>
 <script src="blocks/b-2.js"></script>
+<script src="blocks/i-chart/i-chart.js"></script>
+<script src="blocks/i-tango-color-scheme/i-tango-color-scheme.js"></script>
 <script>
 $(function() {
     console.log(Units.format(+new Date()/1000, 'unixtime'));
@@ -30,6 +32,7 @@ $(function() {
         ]);
 
     Vis($('.b-2'), 'b-2').update();
+    Vis($('.b-2'), 'i-chart');
 
     TaskScheduler.run(
         TaskScheduler.PRIO_DATA,

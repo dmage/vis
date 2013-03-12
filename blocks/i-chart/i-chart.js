@@ -4,7 +4,10 @@
 var busyDelay = 2500;
 
 Vis.blocks['i-chart'] = {
-    init: function() {
+    init: function(params) {
+        params = params || {};
+        params.settingsProvider = params.settingsProvider || {};
+
         var _this = this;
 
         _this._initState = {
@@ -30,10 +33,9 @@ Vis.blocks['i-chart'] = {
         };
         _this.initContent();
 
-        _this.params = _this.params || {};  // FIXME
-        _this.colorScheme = Vis(
-            _this.params.colorScheme || {},
-            (_this.params.colorScheme && _this.params.colorScheme.name) || 'i-tango-color-scheme'
+        _this.colorScheme = Vis.create(
+            params.colorScheme || {},
+            (params.colorScheme && params.colorScheme.name) || 'i-tango-color-scheme'
         );
 
         _this.applySize();
@@ -60,10 +62,9 @@ Vis.blocks['i-chart'] = {
             }
         };
 
-        _this.params.settingsProvider = _this.params.settingsProvider || {};  // FIXME
-        var settingsProvider = Vis(
-            this.params.settingsProvider,
-            this.params.settingsProvider.name || 'undefined-settings-provider'
+        var settingsProvider = Vis.create(
+            params.settingsProvider,
+            params.settingsProvider.name || 'undefined-settings-provider'
         );
 
         this.ping();

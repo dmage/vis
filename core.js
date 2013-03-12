@@ -33,6 +33,8 @@ Vis.fn = Vis.prototype = {
 
 Vis.blocks = {};
 
+Vis.create = Vis;
+
 Vis.render = function(data) {
     if (data instanceof Array) {
         var html = '';

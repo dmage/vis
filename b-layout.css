@@ -1,0 +1,9 @@
+.b-layout
+{
+    border-collapse: collapse;
+}
+
+.b-layout__cell
+{
+    padding: 0;
+}

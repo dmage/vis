@@ -19,25 +19,37 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         this.$object.empty();
 
-        var ml = '';
+        var mlc = [];
+        var ml = { tag: 'table', cls: 'b-layout', content: { tag: 'tr', content: mlc } };
         for (i = 0, l = yAxes.length; i < l; ++i) {
-            yAxis = yAxes[l - i - 1];
+            yAxis = yAxes[i];
             if (yAxis.pos !== 'left') {
                 continue;
             }
 
-            ml += Vis.render({ cls: 'b-box', attrs: { style: 'display: inline-block' }, content: "axis #" + (l - i - 1) });
+            mlc.unshift({
+                tag: 'td',
+                cls: 'b-layout__cell',
+                content: { cls: 'b-box', content: "axis #" + i }
+            });
         }
+        ml = Vis.render(ml);
 
-        var mr = '';
+        var mrc = [];
+        var mr = { tag: 'table', cls: 'b-layout', content: { tag: 'tr', content: mrc } };
         for (i = 0, l = yAxes.length; i < l; ++i) {
             yAxis = yAxes[i];
             if (yAxis.pos !== 'right') {
                 continue;
             }
 
-            mr += Vis.render({ cls: 'b-box', attrs: { style: 'display: inline-block' }, content: "axis #" + i });
+            mrc.push({
+                tag: 'td',
+                cls: 'b-layout__cell',
+                content: { cls: 'b-box', content: "axis #" + i }
+            });
         }
+        mr = Vis.render(mr);
 
         var c = '';
         c += Vis.render({
@@ -59,9 +71,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                 {
                     tag: 'tr',
                     content: [
-                        { tag: 'td', cls: 'b-9__ml', attrs: { style: 'white-space: nowrap' }, content: ml },
+                        { tag: 'td', cls: 'b-9__ml', content: ml },
                         { tag: 'td', cls: 'b-9__mc', content: 'mc' },
-                        { tag: 'td', cls: 'b-9__mr', attrs: { style: 'white-space: nowrap' }, content: mr }
+                        { tag: 'td', cls: 'b-9__mr', content: mr }
                     ]
                 },
                 {

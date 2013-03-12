@@ -11,7 +11,15 @@ SOURCES=\
 	blocks/i-scale-linear/i-scale-linear.js \
 	blocks/b-chart/b-chart.js
 
+.PHONY: all
 all: vis.js
 
 vis.js: $(SOURCES)
 	cat $^ > $@
+
+.PHONY: inotify
+inotify:
+	@inotifywait -e close_write -m $(SOURCES) | \
+	while read -r line; do \
+		$(MAKE); \
+	done

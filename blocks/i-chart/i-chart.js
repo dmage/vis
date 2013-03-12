@@ -5,197 +5,181 @@ var busyDelay = 2500;
 
 Vis.blocks['i-chart'] = {
     init: function(params) {
-        params = params || {};
-        params.settingsProvider = params.settingsProvider || {};
-
         var _this = this;
-
-        _this._initState = {
-            title: false,
-            xAxes: false,
-            yAxes: false,
-            items: false,
-            overlays: false
-        };
-        _this._init = 0;
 
         _this.dimensions = {
             width: 0,
             height: 0
         };
 
+        params = params || {};
         _this.content = {
-            xAxes: [],
-            yAxes: [],
-            items: [],
-            overlays: [],
+            tAxes: params.tAxes || [],
+            xAxes: params.xAxes || [],
+            yAxes: params.yAxes || [],
+            items: params.items || [],
+            overlays: params.overlays || [],
             layers: []
         };
-        _this.initContent();
+        _this._initContent();
 
+        var colorScheme = params.colorScheme || {};
         _this.colorScheme = Vis.create(
-            params.colorScheme || {},
-            (params.colorScheme && params.colorScheme.name) || 'i-tango-color-scheme'
+            colorScheme,
+            colorScheme.name || 'i-tango-color-scheme'
         );
 
-        _this.applySize();
-        _this.initResize();
+        // _this.applySize();
+        // _this.initResize();
+    },
 
-        var initCallbacks = {
-            title: function(title) {
-                _this.setTitle(title);
-            },
-            xAxes: function(xAxes) {
-                _this.setXAxes(xAxes);
-            },
-            yAxes: function(yAxes) {
-                _this.setYAxes(yAxes);
-            },
-            items: function(items) {
-                _this.setItems(items);
-            },
-            overlays: function(overlays) {
-                _this.setOverlays(overlays);
-            },
-            ping: function() {
-                _this.ping();
-            }
-        };
+    initTAxis: function(tAxisNo) { /* override me */ },
+    _initTAxis: function(tAxisNo) {
+        var _this = this,
+            tAxis = _this.content.tAxes[tAxisNo];
 
-        var settingsProvider = Vis.create(
-            params.settingsProvider,
-            params.settingsProvider.name || 'undefined-settings-provider'
+        tAxis.rangeProvider = Vis.create(
+            tAxis.rangeProvider,
+            tAxis.rangeProvider.name || 'undefined-t-range-provider'
         );
 
-        this.ping();
-        settingsProvider.get(initCallbacks);
+        // _this._updateTAxisRange(tAxisNo);
+
+        _this.initTAxis(tAxisNo);
     },
 
-    _updateInit: function() {
-        if (this._init === -1)
-            return;
+    initTAxes: function() { /* override me */ },
+    _initTAxes: function() {
+        var _this = this,
+            tAxes = _this.content.tAxes;
 
-        var initState = this._initState;
-        if (this._init === 0 && initState.title)
-            this._init = 1;
-        if (this._init === 1 && initState.xAxes)
-            this._init = 2;
-        if (this._init === 2 && initState.yAxes)
-            this._init = 3;
-        if (this._init === 3 && initState.items)
-            this._init = 4;
-        if (this._init === 4 && initState.overlays)
-            this._init = -1; // -1 = finished.
-
-        if (this._init === -1) {
-            this.ping(false); // send last ping and disable busy timer
-            this.applySize(true);
-        }
-    },
-
-    busy: function() {
-        this._busy = true;
-
-        // override me
-    },
-
-    stopBusy: function() {
-        // override me
-
-        this._busy = false;
-    },
-
-    ping: function(keep) {
-        var _this = this;
-
-        clearTimeout(_this.busyTimeout);
-        delete _this.busyTimeout;
-
-        if (_this._busy) {
-            _this.stopBusy();
+        for (var tAxisNo = 0, l = tAxes.length; tAxisNo < l; ++tAxisNo) {
+            _this._initTAxis(tAxisNo);
         }
 
-        if (typeof keep === 'undefined' || keep) {
-            _this.busyTimeout = setTimeout(function() {
-                _this.busy();
-            }, busyDelay);
-        }
+        _this.initTAxes();
     },
 
-    initContent: function () {
-        // override me
-    },
+    initXAxis: function(xAxisNo) { /* override me */ },
+    _initXAxis: function(xAxisNo) {
+        var _this = this,
+            xAxis = _this.content.xAxes[xAxisNo];
 
-    initResize: function() {
-        // override me
-    },
+        var scale = xAxis.scale || {};
+        xAxis.scale = Vis.create(
+            scale,
+            scale.name || 'b-scale__linear'
+        );
 
-    _initLayers: function() {
-        // override me
-    },
-
-    setOverlays: function(overlays) {
-        var _this = this;
-
-        _this.content.overlays = overlays;
-
-        for (var i = 0, l = _this.content.overlays.length; i < l; ++i) {
-            var overlay = _this.content.overlays[i];
-            overlay.dimensions = _this.dimensions;
-            overlay.content = _this.content;
-            _this.content.overlays[i] = Vis(
-                overlay,
-                overlay.name
-            );
+        if (typeof xAxis.units === 'undefined') {
+            xAxis.units = "";
         }
 
-        if (this._initState.items) {
-            this._initLayers();
+        xAxis.rangeProvider = Vis.create(
+            xAxis.rangeProvider,
+            xAxis.rangeProvider.name || 'undefined-x-range-provider'
+        );
+
+        if (typeof xAxis.processors === 'undefined') {
+            xAxis.processors = [];
+        }
+        for (var i = 0, l = xAxis.processors.length; i < l; ++i) {
+            var processor = xAxis.processors[i];
+            processor.dimensions = _this.dimensions;
+            processor.content = _this.content;
+            xAxis.processors[i] = Vis.create(processor, processor.name);
         }
 
-        this._initState.overlays = true;
-        this._updateInit();
+        _this.initXAxis(xAxisNo);
     },
 
-    setTitle: function(title) {
-        // override me
+    initXAxes: function() { /* override me */ },
+    _initXAxes: function() {
+        var _this = this,
+            xAxes = _this.content.xAxes;
 
-        this._initState.title = true;
-        this._updateInit();
+        for (var xAxisNo = 0, l = xAxes.length; xAxisNo < l; ++xAxisNo) {
+            _this._initXAxis(xAxisNo);
+        }
+
+        _this.initXAxes();
     },
 
+    initYAxis: function(yAxisNo) { /* override me */ },
     _initYAxis: function(yAxisNo) {
         var _this = this,
-            yAxis = this.content.yAxes[yAxisNo];
+            yAxis = _this.content.yAxes[yAxisNo];
 
-        // override me
-
-        yAxis.scale = Vis({}, 'b-scale__linear');
-
-        yAxis.rangeProvider = Vis(
-            yAxis.rangeProvider,
-            yAxis.rangeProvider.name
+        var scale = yAxis.scale || {};
+        yAxis.scale = Vis.create(
+            scale,
+            scale.name || 'b-scale__linear'
         );
 
-        typeof yAxis.processors !== 'undefined' || (yAxis.processors = []);
+        if (typeof yAxis.units === 'undefined') {
+            yAxis.units = "";
+        }
+
+        yAxis.rangeProvider = Vis.create(
+            yAxis.rangeProvider,
+            yAxis.rangeProvider.name || 'undefined-y-range-provider'
+        );
+
+        if (typeof yAxis.processors === 'undefined') {
+            yAxis.processors = [];
+        }
         for (var i = 0, l = yAxis.processors.length; i < l; ++i) {
             var processor = yAxis.processors[i];
             processor.dimensions = _this.dimensions;
             processor.content = _this.content;
-            yAxis.processors[i] = Vis(processor, processor.name);
+            yAxis.processors[i] = Vis.create(processor, processor.name);
+        }
+
+        _this.initXAxis(yAxisNo);
+    },
+
+    initYAxes: function() { /* override me */ },
+    _initYAxes: function() {
+        var _this = this,
+            yAxes = _this.content.yAxes;
+
+        for (var yAxisNo = 0, l = yAxes.length; yAxisNo < l; ++yAxisNo) {
+            _this._initYAxis(yAxisNo);
+        }
+
+        _this.initYAxes();
+    },
+
+    _initOverlays: function() {
+        var _this = this,
+            overlays = _this.content.overlays;
+
+        for (var i = 0, l = overlays.length; i < l; ++i) {
+            var overlay = overlays[i];
+            overlay.dimensions = _this.dimensions;
+            overlay.content = _this.content;
+            overlays[i] = Vis.create(
+                overlay,
+                overlay.name || 'undefined-overlay'
+            );
         }
     },
 
-    _initYAxes: function() {
-        // override me
+    initLayers: function() { /* override me */ },
+
+    initContent: function () { /* override me */ },
+    _initContent: function () {
+        this._initTAxes();
+        this._initXAxes();
+        this._initYAxes();
+        this._initOverlays();
+        this.initLayers();
+
+        this.initContent();
     },
 
-    _destroyYAxes: function() {
-        var _this = this;
-
+    initResize: function() {
         // override me
-
-        delete _this.content.yAxes;
     },
 
     _updateYAxisRange: function(yAxisNo, range) {
@@ -225,38 +209,6 @@ Vis.blocks['i-chart'] = {
 
         _this._initState.yAxes = true;
         _this._updateInit();
-    },
-
-    _initXAxis: function(xAxisNo) {
-        var _this = this,
-            xAxis = this.content.xAxes[xAxisNo];
-
-        // override me
-
-        xAxis.scale = Vis({}, 'b-scale__linear');
-
-        xAxis.rangeProvider = Vis(
-            xAxis.rangeProvider,
-            xAxis.rangeProvider.name
-        );
-
-        typeof xAxis.units !== 'undefined' || (xAxis.units = "");
-
-        _this._updateXAxisRange(xAxisNo);
-
-        // override me
-    },
-
-    _initXAxes: function() {
-        // override me
-    },
-
-    _destroyXAxes: function() {
-        var _this = this;
-
-        // override me
-
-        delete _this.content.xAxes;
     },
 
     _updateXAxisRange: function(xAxisNo) {

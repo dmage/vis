@@ -17,7 +17,8 @@
 <script src="blocks/b-2.js"></script>
 <script src="blocks/i-chart/i-chart.js"></script>
 <script src="blocks/i-tango-color-scheme/i-tango-color-scheme.js"></script>
-<script src="blocks/i-static-settings-provider/i-static-settings-provider.js"></script>
+<script src="blocks/i-static-range-provider/i-static-range-provider.js"></script>
+<script src="blocks/b-chart/b-chart.js"></script>
 <script>
 $(function() {
     console.log(Units.format(+new Date()/1000, 'unixtime'));
@@ -33,13 +34,17 @@ $(function() {
         ]);
 
     Vis($('.b-2'), 'b-2').update();
+
     Vis(
         {
-            settingsProvider: {
-                name: 'i-static-settings-provider'
-            }
+            $object: $('.b-chart'),
+            tAxes: [
+                {
+                    rangeProvider: { name: 'i-static-range-provider' }
+                }
+            ]
         },
-        'i-chart'
+        'b-chart'
     );
 
     TaskScheduler.run(
@@ -56,6 +61,9 @@ $(function() {
 
 <body>
 <h1>Vis.js</h1>
+
+<div class="b-chart"></div>
+
 <table class="b-9">
 <tr>
     <td class="b-9__tl"></td>

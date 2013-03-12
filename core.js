@@ -73,6 +73,7 @@ Vis.render = function(data) {
 
 Vis.extend = function(base, mix) {
     var result = Object.create(base);
+    result.__base = base;
     for (var i in mix) {
         if (mix.hasOwnProperty(i)) {
             result[i] = mix[i];

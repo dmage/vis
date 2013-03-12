@@ -67,6 +67,16 @@ Vis.render = function(data) {
     }
 }
 
+Vis.extend = function(base, mix) {
+    var result = Object.create(base);
+    for (var i in mix) {
+        if (mix.hasOwnProperty(i)) {
+            result[i] = mix[i];
+        }
+    }
+    return result;
+}
+
 exports.Vis = Vis;
 
 })(window);

@@ -11,9 +11,12 @@
 <script src="http://yandex.st/jquery/1.9.1/jquery.min.js"></script>
 <script src="core.js"></script>
 <script src="modules/task-scheduler.js"></script>
+<script src="modules/units.js"></script>
 <script src="blocks/b-axis/b-axis.js"></script>
 <script>
 $(function() {
+    console.log(Units.format(+new Date()/1000, 'unixtime'));
+
     Vis($('.b-axis'), 'b-axis')
         .update('bottom', [
             { offset: 0, label: '0' },

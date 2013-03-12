@@ -68,7 +68,7 @@ Vis.blocks['i-chart'] = {
         var scale = xAxis.scale || {};
         xAxis.scale = Vis.create(
             scale,
-            scale.name || 'b-scale__linear'
+            scale.name || 'i-scale-linear'
         );
 
         if (typeof xAxis.units === 'undefined') {
@@ -113,11 +113,15 @@ Vis.blocks['i-chart'] = {
         var scale = yAxis.scale || {};
         yAxis.scale = Vis.create(
             scale,
-            scale.name || 'b-scale__linear'
+            scale.name || 'i-scale-linear'
         );
 
         if (typeof yAxis.units === 'undefined') {
             yAxis.units = "";
+        }
+
+        if (yAxis.pos !== 'left' && yAxis.pos !== 'right') {
+            yAxis.pos = 'right';
         }
 
         yAxis.rangeProvider = Vis.create(

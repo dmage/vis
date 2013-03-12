@@ -18,6 +18,7 @@
 <script src="blocks/i-chart/i-chart.js"></script>
 <script src="blocks/i-tango-color-scheme/i-tango-color-scheme.js"></script>
 <script src="blocks/i-static-range-provider/i-static-range-provider.js"></script>
+<script src="blocks/i-scale-linear/i-scale-linear.js"></script>
 <script src="blocks/b-chart/b-chart.js"></script>
 <script>
 $(function() {
@@ -42,6 +43,12 @@ $(function() {
                 {
                     rangeProvider: { name: 'i-static-range-provider' }
                 }
+            ],
+            yAxes: [
+                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' },
+                { rangeProvider: { name: 'i-static-range-provider' } },
+                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' },
+                { rangeProvider: { name: 'i-static-range-provider' } }
             ]
         },
         'b-chart'

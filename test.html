@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="b-loading.css">
 <script src="http://yandex.st/jquery/1.9.1/jquery.min.js"></script>
 <script src="core.js"></script>
+<script src="modules/task-scheduler.js"></script>
 <script src="blocks/b-axis/b-axis.js"></script>
 <script>
 $(function() {
@@ -22,6 +23,15 @@ $(function() {
             { offset: 400, label: '400' },
             { offset: 500, label: '500' }
         ]);
+
+    TaskScheduler.run(
+        TaskScheduler.PRIO_DATA,
+        [
+            function() { console.log('step1', arguments); this.next() },
+            function() { console.log('step2', arguments); this.next() }
+        ],
+        { args: [1, 2, 3] }
+    );
 });
 </script>
 </head>

@@ -26,11 +26,23 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             var c = Vis.render({
                 tag: 'td',
                 cls: 'b-layout__cell',
-                content: { cls: 'b-box', content: "axis #" + i }
+                content: {
+                    attrs: { style: 'width: 60px; height: 200px' },
+                    cls: 'b-axis'
+                }
             });
-            yAxis.$object = $(c);
+            var $c = $(c);
+            $tr[method]($c);
 
-            $tr[method](yAxis.$object);
+            yAxis.$object = $('.b-axis', $c);
+            yAxis.visObject = Vis(yAxis.$object, 'b-axis').update(pos, [
+                { offset: 0, label: '0' },
+                { offset: 100, label: '100' },
+                { offset: 200, label: '200' },
+                { offset: 300, label: '300' },
+                { offset: 400, label: '400' },
+                { offset: 500, label: '500' }
+            ]);
         }
         layout.empty().append($tr);
     },

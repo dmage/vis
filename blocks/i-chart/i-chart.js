@@ -75,6 +75,10 @@ Vis.blocks['i-chart'] = {
             xAxis.units = "";
         }
 
+        if (xAxis.pos !== 'top' && xAxis.pos !== 'bottom') {
+            xAxis.pos = 'bottom';
+        }
+
         xAxis.rangeProvider = Vis.create(
             xAxis.rangeProvider,
             xAxis.rangeProvider.name || 'undefined-x-range-provider'

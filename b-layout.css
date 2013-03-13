@@ -1,6 +1,7 @@
 .b-layout
 {
     border-collapse: collapse;
+    width: 100%;
 }
 
 .b-layout__cell

@@ -11,6 +11,44 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.renderObjects();
     },
 
+    renderXAxes: function(pos, layout, method) {
+        var _this = this,
+            content = _this.content,
+            xAxes = content.xAxes;
+
+        layout.empty();
+        for (var i = 0, l = xAxes.length; i < l; ++i) {
+            var xAxis = xAxes[i];
+            if (xAxis.pos !== pos) {
+                continue;
+            }
+
+            var c = Vis.render({
+                tag: 'tr',
+                content: {
+                    tag: 'td',
+                    cls: 'b-layout__cell',
+                    content: {
+                        attrs: { style: 'height: 30px' },
+                        cls: 'b-axis'
+                    }
+                }
+            });
+            var $c = $(c);
+            layout[method]($c);
+
+            xAxis.$object = $('.b-axis', $c);
+            xAxis.visObject = Vis(xAxis.$object, 'b-axis').update(pos, [
+                { offset: 0, label: '0' },
+                { offset: 100, label: '100' },
+                { offset: 200, label: '200' },
+                { offset: 300, label: '300' },
+                { offset: 400, label: '400' },
+                { offset: 500, label: '500' }
+            ]);
+        }
+    },
+
     renderYAxes: function(pos, layout, method) {
         var _this = this,
             content = _this.content,
@@ -60,9 +98,13 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                     {
                         tag: 'tr',
                         content: [
-                            { tag: 'td', cls: 'b-9__tl', content: 'tl' },
-                            { tag: 'td', cls: 'b-9__tc', content: 'tc' },
-                            { tag: 'td', cls: 'b-9__tr', content: 'tr' }
+                            { tag: 'td', cls: 'b-9__tl', content: '' },
+                            {
+                                tag: 'td',
+                                cls: 'b-9__tc',
+                                content: { tag: 'table', cls: 'b-layout' }
+                            },
+                            { tag: 'td', cls: 'b-9__tr', content: '' }
                         ]
                     },
                     {
@@ -84,9 +126,13 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                     {
                         tag: 'tr',
                         content: [
-                            { tag: 'td', cls: 'b-9__bl', content: 'bl' },
-                            { tag: 'td', cls: 'b-9__bc', content: 'bc' },
-                            { tag: 'td', cls: 'b-9__br', content: 'br' }
+                            { tag: 'td', cls: 'b-9__bl', content: '' },
+                            {
+                                tag: 'td',
+                                cls: 'b-9__bc',
+                                content: { tag: 'table', cls: 'b-layout' }
+                            },
+                            { tag: 'td', cls: 'b-9__br', content: '' }
                         ]
                     }
                 ]
@@ -95,6 +141,8 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         this.renderYAxes('left', $('.b-9__ml .b-layout', this.$object), 'prepend');
         this.renderYAxes('right', $('.b-9__mr .b-layout', this.$object), 'append');
+        this.renderXAxes('top', $('.b-9__tc .b-layout', this.$object), 'prepend');
+        this.renderXAxes('bottom', $('.b-9__bc .b-layout', this.$object), 'append');
     }
 });
 

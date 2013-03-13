@@ -9,6 +9,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.__base.init.apply(this, arguments);
 
         this.renderObjects();
+        this.updateDimensions();
 
         var _this = this,
             content = _this.content,
@@ -101,7 +102,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
     },
 
     renderObjects: function() {
-        this.$object.html(Vis.render([
+        var $object = this.$object;
+
+        $object.html(Vis.render([
             {
                 cls: 'b-chart__header',
                 content: 'Header'
@@ -130,7 +133,11 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                                 cls: 'b-9__ml',
                                 content: { tag: 'table', cls: 'b-layout' }
                             },
-                            { tag: 'td', cls: 'b-9__mc', content: 'mc' },
+                            {
+                                tag: 'td',
+                                cls: 'b-9__mc',
+                                content: { cls: 'b-chart__viewport' }
+                            },
                             {
                                 tag: 'td',
                                 cls: 'b-9__mr',
@@ -154,10 +161,22 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             }
         ]));
 
-        this.renderYAxes('left', $('.b-9__ml .b-layout', this.$object), 'prepend');
-        this.renderYAxes('right', $('.b-9__mr .b-layout', this.$object), 'append');
-        this.renderXAxes('top', $('.b-9__tc .b-layout', this.$object), 'prepend');
-        this.renderXAxes('bottom', $('.b-9__bc .b-layout', this.$object), 'append');
+        this.renderYAxes('left', $('.b-9__ml .b-layout', $object), 'prepend');
+        this.renderYAxes('right', $('.b-9__mr .b-layout', $object), 'append');
+        this.renderXAxes('top', $('.b-9__tc .b-layout', $object), 'prepend');
+        this.renderXAxes('bottom', $('.b-9__bc .b-layout', $object), 'append');
+
+        this.$viewport = $('.b-chart__viewport', $object);
+    },
+
+    updateDimensions: function() {
+        var _this = this,
+            dim = _this.dimensions;
+
+        dim.height = 200;
+        dim.width = this.$viewport.width();
+
+        this._applySize();
     }
 });
 

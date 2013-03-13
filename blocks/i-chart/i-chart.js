@@ -69,7 +69,6 @@ Vis.blocks['i-chart'] = {
             scale,
             scale.name || 'i-scale-linear'
         );
-        xAxis.scale.output(0, 600);  // FIXME
 
         if (typeof xAxis.units === 'undefined') {
             xAxis.units = "";
@@ -120,7 +119,6 @@ Vis.blocks['i-chart'] = {
         var _this = this,
             xAxis = this.content.xAxes[xAxisNo];
 
-        _this.dimensions.width = 600;
         xAxis.ticks = xAxis.scale.ticks(Math.floor(_this.dimensions.width / 65), xAxis.units);
 
         var ticks = Units.formatTicks(xAxis.ticks, xAxis.units, xAxis.scale);
@@ -219,6 +217,23 @@ Vis.blocks['i-chart'] = {
         this.initLayers();
 
         this.initContent();
+    },
+
+    applySize: function () { /* override me */ },
+    _applySize: function() {
+        var _this = this,
+            dim = _this.dimensions,
+            xAxes = _this.content.xAxes,
+            yAxes = _this.content.yAxes,
+            i, l;
+
+        for (i = 0, l = xAxes.length; i < l; ++i) {
+            xAxes[i].scale.output(0, dim.width - 1);
+        }
+
+        for (i = 0, l = yAxes.length; i < l; ++i) {
+            yAxes[i].scale.output(0, dim.height - 1);
+        }
     },
 
     initResize: function() {
@@ -364,10 +379,6 @@ Vis.blocks['i-chart'] = {
             tick.offset = _this.dimensions.height - Math.round(yAxis.scale.f(tick.tickValue)) - 1;
         }
         return ticks;
-        // override me
-    },
-
-    applySize: function(force) {
         // override me
     },
 

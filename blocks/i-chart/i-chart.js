@@ -114,12 +114,15 @@ Vis.blocks['i-chart'] = {
             scale = xAxis.scale;
 
         if (range.min == scale.inputMin && range.max == scale.inputMax) {
+            console.log('nothing changed');
             return;
         }
 
         scale.input(range.min, range.max);
 
-        this.updateXAxisRange(xAxisNo);
+        _this.updateXAxisRange(xAxisNo);
+
+        _this._renderXAxis(xAxisNo);
     },
 
     renderXAxis: function(xAxisNo, ticks) { /* override me */ },
@@ -205,7 +208,9 @@ Vis.blocks['i-chart'] = {
 
         scale.input(range.min, range.max);
 
-        this.updateYAxisRange(yAxisNo);
+        _this.updateYAxisRange(yAxisNo);
+
+        _this._renderYAxis(yAxisNo);
     },
 
     renderYAxis: function(yAxisNo, ticks) { /* override me */ },

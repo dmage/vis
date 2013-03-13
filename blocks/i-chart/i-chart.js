@@ -114,7 +114,6 @@ Vis.blocks['i-chart'] = {
             scale = xAxis.scale;
 
         if (range.min == scale.inputMin && range.max == scale.inputMax) {
-            console.log('nothing changed');
             return;
         }
 

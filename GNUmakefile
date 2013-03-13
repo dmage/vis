@@ -1,15 +1,21 @@
+MODULES=\
+	core \
+	task-scheduler \
+	units
+
+BLOCKS=\
+	b-axis \
+	i-chart \
+	i-tango-color-scheme \
+	i-static-range-provider \
+	i-scale-linear \
+	b-chart
+
 SOURCES=\
-	modules/core.js \
-	modules/task-scheduler.js \
-	modules/units.js \
-	blocks/b-axis/b-axis.js \
+	$(foreach module,$(MODULES),modules/$(module).js) \
+	$(wildcard $(foreach block,$(BLOCKS),blocks/$(block)/$(block).js)) \
 	blocks/b-1.js \
-	blocks/b-2.js \
-	blocks/i-chart/i-chart.js \
-	blocks/i-tango-color-scheme/i-tango-color-scheme.js \
-	blocks/i-static-range-provider/i-static-range-provider.js \
-	blocks/i-scale-linear/i-scale-linear.js \
-	blocks/b-chart/b-chart.js
+	blocks/b-2.js
 
 .PHONY: all
 all: vis.js

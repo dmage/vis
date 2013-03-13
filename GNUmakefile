@@ -8,6 +8,8 @@ BLOCKS=\
 	i-chart \
 	i-tango-color-scheme \
 	i-static-range-provider \
+	i-time-range-provider \
+	i-current-time-range-provider \
 	i-scale-linear \
 	b-chart
 

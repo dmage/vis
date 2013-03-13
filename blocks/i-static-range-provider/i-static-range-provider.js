@@ -10,6 +10,10 @@ Vis.blocks['i-static-range-provider'] = {
             min: this.params.min || 0,
             max: this.params.max || 1
         };
+    },
+
+    on: function() {
+        /* just ignore it */
     }
 };
 

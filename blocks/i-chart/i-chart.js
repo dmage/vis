@@ -43,8 +43,6 @@ Vis.blocks['i-chart'] = {
             tAxis.rangeProvider.name || 'undefined-t-range-provider'
         );
 
-        // _this._updateTAxisRange(tAxisNo);
-
         _this.initTAxis(tAxisNo);
     },
 
@@ -63,7 +61,8 @@ Vis.blocks['i-chart'] = {
     initXAxis: function(xAxisNo) { /* override me */ },
     _initXAxis: function(xAxisNo) {
         var _this = this,
-            xAxis = _this.content.xAxes[xAxisNo];
+            xAxis = _this.content.xAxes[xAxisNo],
+            tAxes = _this.content.tAxes;
 
         var scale = xAxis.scale || {};
         xAxis.scale = Vis.create(
@@ -79,6 +78,11 @@ Vis.blocks['i-chart'] = {
             xAxis.pos = 'bottom';
         }
 
+        xAxis.tAxis = tAxes[xAxis.tAxisNo || 0] || tAxes[0];
+
+        if (typeof xAxis.rangeProvider.tAxis === 'undefined') {
+            xAxis.rangeProvider.timeRangeProvider = xAxis.tAxis.rangeProvider;
+        }
         xAxis.rangeProvider = Vis.create(
             xAxis.rangeProvider,
             xAxis.rangeProvider.name || 'undefined-x-range-provider'
@@ -217,23 +221,6 @@ Vis.blocks['i-chart'] = {
 
         _this._initState.yAxes = true;
         _this._updateInit();
-    },
-
-    _updateXAxisRange: function(xAxisNo) {
-        var _this = this,
-            xAxis = _this.content.xAxes[xAxisNo],
-            scale = xAxis.scale,
-            items = _this.content.items,
-            layers = _this.content.layers,
-            range = xAxis.rangeProvider.get();
-
-        // override me
-
-        xAxis.scale.input(range.min, range.max);
-
-        _this._renderXAxis(xAxisNo);
-
-        // override me
     },
 
     setXAxes: function(xAxes) {

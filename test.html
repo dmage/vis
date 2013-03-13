@@ -32,12 +32,14 @@ $(function() {
             $object: $('.b-chart'),
             tAxes: [
                 {
-                    rangeProvider: { name: 'i-static-range-provider' }
+                    rangeProvider: {
+                        name: 'i-current-time-range-provider',
+                    }
                 }
             ],
             xAxes: [
                 { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
-                { rangeProvider: { name: 'i-static-range-provider' } },
+                { rangeProvider: { name: 'i-time-range-provider' } },
                 { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
                 { rangeProvider: { name: 'i-static-range-provider' } }
             ],

@@ -9,6 +9,30 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.__base.init(params);
 
         this.renderObjects();
+
+        var _this = this,
+            content = _this.content,
+            xAxes = content.xAxes;
+        for (var i = 0, l = xAxes.length; i < l; ++i) {
+            (function(xAxisNo) {
+                xAxes[xAxisNo].rangeProvider.on('update', function() {
+                    _this.rerenderXAxis(xAxisNo);
+                });
+            })(i);
+
+            _this.rerenderXAxis(i);
+        }
+    },
+
+    rerenderXAxis: function(xAxisNo) {
+        var _this = this,
+            content = _this.content,
+            xAxes = content.xAxes,
+            xAxis = xAxes[xAxisNo];
+        xAxis.visObject.update(xAxis.pos, [
+            { offset: 0, label: 0 },
+            { offset: 200, label: "" + xAxis.rangeProvider.get().max }
+        ]);
     },
 
     renderXAxes: function(pos, layout, method) {
@@ -38,14 +62,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             layout[method]($c);
 
             xAxis.$object = $('.b-axis', $c);
-            xAxis.visObject = Vis(xAxis.$object, 'b-axis').update(pos, [
-                { offset: 0, label: '0' },
-                { offset: 100, label: '100' },
-                { offset: 200, label: '200' },
-                { offset: 300, label: '300' },
-                { offset: 400, label: '400' },
-                { offset: 500, label: '500' }
-            ]);
+            xAxis.visObject = Vis.create(xAxis.$object, 'b-axis');
         }
     },
 

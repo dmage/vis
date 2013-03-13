@@ -11,17 +11,14 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.renderObjects();
         this.updateDimensions();
 
-        var _this = this,
-            content = _this.content,
-            xAxes = content.xAxes;
-        for (var i = 0, l = xAxes.length; i < l; ++i) {
-            (function(xAxisNo) {
-                xAxes[xAxisNo].rangeProvider.on('update', function() {
-                    _this._renderXAxis(xAxisNo);
-                });
-            })(i);
-
-            _this._renderXAxis(i);
+        var xAxes = this.content.xAxes,
+            yAxes = this.content.yAxes,
+            i, l;
+        for (i = 0, l = xAxes.length; i < l; ++i) {
+            this._renderXAxis(i);
+        }
+        for (i = 0, l = yAxes.length; i < l; ++i) {
+            this._renderYAxis(i);
         }
     },
 
@@ -31,7 +28,20 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             xAxes = content.xAxes,
             xAxis = xAxes[xAxisNo];
 
-        xAxis.visObject.update(xAxis.pos, ticks);
+        if (xAxis.visObject) {
+            xAxis.visObject.update(xAxis.pos, ticks);
+        }
+    },
+
+    renderYAxis: function(yAxisNo, ticks) {
+        var _this = this,
+            content = _this.content,
+            yAxes = content.yAxes,
+            yAxis = yAxes[yAxisNo];
+
+        if (yAxis.visObject) {
+            yAxis.visObject.update(yAxis.pos, ticks);
+        }
     },
 
     renderXAxes: function(pos, layout, method) {
@@ -89,14 +99,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             $tr[method]($c);
 
             yAxis.$object = $('.b-axis', $c);
-            yAxis.visObject = Vis(yAxis.$object, 'b-axis').update(pos, [
-                { offset: 0, label: '0' },
-                { offset: 100, label: '100' },
-                { offset: 200, label: '200' },
-                { offset: 300, label: '300' },
-                { offset: 400, label: '400' },
-                { offset: 500, label: '500' }
-            ]);
+            yAxis.visObject = Vis(yAxis.$object, 'b-axis');
         }
         layout.empty().append($tr);
     },

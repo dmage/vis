@@ -106,12 +106,20 @@ Vis.blocks['i-chart'] = {
         _this._updateXAxisRange(xAxisNo);
     },
 
+    updateXAxisRange: function(xAxisNo) { /* override me */ },
     _updateXAxisRange: function(xAxisNo) {
         var _this = this,
             xAxis = _this.content.xAxes[xAxisNo],
-            xRange = xAxis.rangeProvider.get();
+            range = xAxis.rangeProvider.get(),
+            scale = xAxis.scale;
 
-        xAxis.scale.input(xRange.min, xRange.max);
+        if (range.min == scale.inputMin && range.max == scale.inputMax) {
+            return;
+        }
+
+        scale.input(range.min, range.max);
+
+        this.updateXAxisRange(xAxisNo);
     },
 
     renderXAxis: function(xAxisNo, ticks) { /* override me */ },
@@ -177,6 +185,43 @@ Vis.blocks['i-chart'] = {
         }
 
         _this.initXAxis(yAxisNo);
+
+        yAxis.rangeProvider.on('update', function() {
+            _this._updateYAxisRange(yAxisNo);
+        });
+        _this._updateYAxisRange(yAxisNo);
+    },
+
+    updateYAxisRange: function(yAxisNo) { /* override me */ },
+    _updateYAxisRange: function(yAxisNo) {
+        var _this = this,
+            yAxis = _this.content.yAxes[yAxisNo],
+            range = yAxis.rangeProvider.get(),
+            scale = yAxis.scale;
+
+        if (range.min == scale.inputMin && range.max == scale.inputMax) {
+            return;
+        }
+
+        scale.input(range.min, range.max);
+
+        this.updateYAxisRange(yAxisNo);
+    },
+
+    renderYAxis: function(yAxisNo, ticks) { /* override me */ },
+    _renderYAxis: function(yAxisNo) {
+        var _this = this,
+            yAxis = this.content.yAxes[yAxisNo];
+
+        yAxis.ticks = yAxis.scale.ticks(Math.floor(_this.dimensions.height / 40), yAxis.units);
+
+        var ticks = Units.formatTicks(yAxis.ticks, yAxis.units, yAxis.scale);
+        for (var i = 0, l = ticks.length; i < l; ++i) {
+            var tick = ticks[i];
+            tick.offset = _this.dimensions.height - Math.round(yAxis.scale.f(tick.tickValue)) - 1;
+        }
+
+        this.renderYAxis(yAxisNo, ticks);
     },
 
     initYAxes: function() { /* override me */ },
@@ -238,20 +283,6 @@ Vis.blocks['i-chart'] = {
 
     initResize: function() {
         // override me
-    },
-
-    _updateYAxisRange: function(yAxisNo, range) {
-        var _this = this,
-            yAxis = _this.content.yAxes[yAxisNo],
-            scale = yAxis.scale;
-
-        if (range.min == scale.inputMin && range.max == scale.inputMax) {
-            return;
-        }
-
-        scale.input(range.min, range.max);
-
-        _this._renderYAxis(yAxisNo);
     },
 
     setYAxes: function(yAxes) {
@@ -365,21 +396,6 @@ Vis.blocks['i-chart'] = {
 
         _this._initState.items = true;
         _this._updateInit();
-    },
-
-    _renderYAxis: function(yAxisNo) {
-        var _this = this,
-            yAxis = this.content.yAxes[yAxisNo];
-
-        yAxis.ticks = yAxis.scale.ticks(Math.floor(_this.dimensions.height / 40), yAxis.units);
-
-        var ticks = Units.formatTicks(yAxis.ticks, "", yAxis.scale);
-        for (var i = 0, l = ticks.length; i < l; ++i) {
-            var tick = ticks[i];
-            tick.offset = _this.dimensions.height - Math.round(yAxis.scale.f(tick.tickValue)) - 1;
-        }
-        return ticks;
-        // override me
     },
 
     _runProcessors: function() {

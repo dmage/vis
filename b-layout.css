@@ -6,4 +6,5 @@
 .b-layout__cell
 {
     padding: 0;
+    vertical-align: top;
 }

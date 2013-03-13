@@ -28,7 +28,7 @@ Vis.blocks['i-scale-linear'] = {
                 this.inputMax = min + 1;
             }
         } else if (min > max) {
-            console.log('b-scale__linear.input: min > max;', { min: min, max: max });
+            console.log('i-scale-linear.input: min > max;', { min: min, max: max });
             this.inputMax = min;
             this.inputMin = max;
         } else {
@@ -41,7 +41,7 @@ Vis.blocks['i-scale-linear'] = {
 
     output: function(min, max) {
         if (min >= max) {
-            console.log('b-scale__linear.output: min >= max;', { min: min, max: max });
+            console.log('i-scale-linear.output: min >= max;', { min: min, max: max });
             this.outputMax = min;
             this.outputMin = max;
         } else {

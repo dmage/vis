@@ -35,6 +35,8 @@ Vis.blocks = {};
 
 Vis.create = Vis;
 
+Vis.error = Vis.fn.error;
+
 Vis.render = function(data) {
     if (data instanceof Array) {
         var html = '';

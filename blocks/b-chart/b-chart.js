@@ -6,7 +6,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         this.$object = params.$object;
 
-        this.__base.init(params);
+        this.__base.init.apply(this, arguments);
 
         this.renderObjects();
 
@@ -16,23 +16,21 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         for (var i = 0, l = xAxes.length; i < l; ++i) {
             (function(xAxisNo) {
                 xAxes[xAxisNo].rangeProvider.on('update', function() {
-                    _this.rerenderXAxis(xAxisNo);
+                    _this._renderXAxis(xAxisNo);
                 });
             })(i);
 
-            _this.rerenderXAxis(i);
+            _this._renderXAxis(i);
         }
     },
 
-    rerenderXAxis: function(xAxisNo) {
+    renderXAxis: function(xAxisNo, ticks) {
         var _this = this,
             content = _this.content,
             xAxes = content.xAxes,
             xAxis = xAxes[xAxisNo];
-        xAxis.visObject.update(xAxis.pos, [
-            { offset: 0, label: 0 },
-            { offset: 200, label: "" + xAxis.rangeProvider.get().max }
-        ]);
+
+        xAxis.visObject.update(xAxis.pos, ticks);
     },
 
     renderXAxes: function(pos, layout, method) {

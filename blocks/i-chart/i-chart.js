@@ -69,6 +69,7 @@ Vis.blocks['i-chart'] = {
             scale,
             scale.name || 'i-scale-linear'
         );
+        xAxis.scale.output(0, 600);  // FIXME
 
         if (typeof xAxis.units === 'undefined') {
             xAxis.units = "";
@@ -78,7 +79,7 @@ Vis.blocks['i-chart'] = {
             xAxis.pos = 'bottom';
         }
 
-        xAxis.tAxis = tAxes[xAxis.tAxisNo || 0] || tAxes[0];
+        xAxis.tAxis = tAxes[xAxis.tAxisNo || 0] || Vis.error("No t-axis for x-axis #" + xAxisNo);
 
         if (typeof xAxis.rangeProvider.tAxis === 'undefined') {
             xAxis.rangeProvider.timeRangeProvider = xAxis.tAxis.rangeProvider;
@@ -99,6 +100,36 @@ Vis.blocks['i-chart'] = {
         }
 
         _this.initXAxis(xAxisNo);
+
+        xAxis.rangeProvider.on('update', function() {
+            _this._updateXAxisRange(xAxisNo);
+        });
+        _this._updateXAxisRange(xAxisNo);
+    },
+
+    _updateXAxisRange: function(xAxisNo) {
+        var _this = this,
+            xAxis = _this.content.xAxes[xAxisNo],
+            xRange = xAxis.rangeProvider.get();
+
+        xAxis.scale.input(xRange.min, xRange.max);
+    },
+
+    renderXAxis: function(xAxisNo, ticks) { /* override me */ },
+    _renderXAxis: function(xAxisNo) {
+        var _this = this,
+            xAxis = this.content.xAxes[xAxisNo];
+
+        _this.dimensions.width = 600;
+        xAxis.ticks = xAxis.scale.ticks(Math.floor(_this.dimensions.width / 65), xAxis.units);
+
+        var ticks = Units.formatTicks(xAxis.ticks, xAxis.units, xAxis.scale);
+        for (var i = 0, l = ticks.length; i < l; ++i) {
+            var tick = ticks[i];
+            tick.offset = Math.round(xAxis.scale.f(tick.tickValue));
+        }
+
+        this.renderXAxis(xAxisNo, ticks);
     },
 
     initXAxes: function() { /* override me */ },
@@ -331,21 +362,6 @@ Vis.blocks['i-chart'] = {
         for (var i = 0, l = ticks.length; i < l; ++i) {
             var tick = ticks[i];
             tick.offset = _this.dimensions.height - Math.round(yAxis.scale.f(tick.tickValue)) - 1;
-        }
-        return ticks;
-        // override me
-    },
-
-    _renderXAxis: function(xAxisNo) {
-        var _this = this,
-            xAxis = this.content.xAxes[xAxisNo];
-
-        xAxis.ticks = xAxis.scale.ticks(Math.floor(_this.dimensions.width / 60), xAxis.units);
-
-        var ticks = Units.formatTicks(xAxis.ticks, xAxis.units, xAxis.scale);
-        for (var i = 0, l = ticks.length; i < l; ++i) {
-            var tick = ticks[i];
-            tick.offset = Math.round(xAxis.scale.f(tick.tickValue));
         }
         return ticks;
         // override me

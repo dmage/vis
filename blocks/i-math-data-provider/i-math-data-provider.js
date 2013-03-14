@@ -2,10 +2,26 @@
 
 Vis.blocks['i-math-data-provider'] = {
     init: function(params) {
-        this.params = params;
+        var _this = this,
+            timeRangeProvider = _this.timeRangeProvider = params.timeRangeProvider;
+
+        _this.params = params;
+
+        timeRangeProvider.on('update.vis', function() {
+            _this.range = timeRangeProvider.get();
+            $(_this).trigger('update.vis');
+        });
+        _this.range = timeRangeProvider.get();
     },
 
-    get: function(xbegin, xend) {
+    on: function(action, callback) {
+        $(this).on(action + '.vis', callback);
+    },
+
+    get: function() {
+        var xbegin = this.range.min,
+            xend = this.range.max;
+
         var step = this.params.step || 1;
         var f = this[this.params.func || 'sin'] || this.sin;
         var factor = this.params.factor || 1;

@@ -12,12 +12,12 @@ Vis.blocks['i-time-range-provider'] = {
         _this.range = timeRangeProvider.get();
     },
 
-    get: function() {
-        return this.range;
-    },
-
     on: function(action, callback) {
         $(this).on(action + '.vis', callback);
+    },
+
+    get: function() {
+        return this.range;
     }
 };
 

@@ -45,6 +45,33 @@ Vis.blocks['i-chart'] = {
         );
 
         _this.initTAxis(tAxisNo);
+
+        tAxis.rangeProvider.on('update', function() {
+            _this._updateTAxisRange(tAxisNo);
+        });
+        _this._updateTAxisRange(tAxisNo);
+    },
+
+    updateTAxisRange: function(tAxisNo) { /* override me */ },
+    _updateTAxisRange: function(tAxisNo) {
+        var _this = this,
+            tAxis = _this.content.tAxes[tAxisNo],
+            range = tAxis.rangeProvider.get(),
+            scale = tAxis.scale || {},
+            items = _this.content.items;
+
+        _this.updateTAxisRange(tAxisNo);
+
+        if (range.min == scale.inputMin && range.max == scale.inputMax) {
+            return;
+        }
+
+        tAxis.scale = {
+            inputMin: range.min,
+            inputMax: range.max
+        };
+
+        _this.updateTAxisRange(tAxisNo);
     },
 
     initTAxes: function() { /* override me */ },
@@ -81,7 +108,7 @@ Vis.blocks['i-chart'] = {
 
         xAxis.tAxis = tAxes[xAxis.tAxisNo || 0] || Vis.error("No t-axis for x-axis #" + xAxisNo);
 
-        if (typeof xAxis.rangeProvider.tAxis === 'undefined') {
+        if (typeof xAxis.rangeProvider.timeRangeProvider === 'undefined') {
             xAxis.rangeProvider.timeRangeProvider = xAxis.tAxis.rangeProvider;
         }
         xAxis.rangeProvider = Vis.create(
@@ -138,7 +165,7 @@ Vis.blocks['i-chart'] = {
             tick.offset = Math.round(xAxis.scale.f(tick.tickValue));
         }
 
-        this.renderXAxis(xAxisNo, ticks);
+        _this.renderXAxis(xAxisNo, ticks);
     },
 
     initXAxes: function() { /* override me */ },
@@ -226,7 +253,7 @@ Vis.blocks['i-chart'] = {
             tick.offset = _this.dimensions.height - Math.round(yAxis.scale.f(tick.tickValue)) - 1;
         }
 
-        this.renderYAxis(yAxisNo, ticks);
+        _this.renderYAxis(yAxisNo, ticks);
     },
 
     initYAxes: function() { /* override me */ },
@@ -243,15 +270,21 @@ Vis.blocks['i-chart'] = {
 
     _initItem: function(itemNo) {
         var _this = this,
+            tAxes = _this.content.tAxes,
             item = _this.content.items[itemNo];
 
+        item.tAxis = tAxes[item.tAxisNo || 0] || Vis.error("No t-axis for item #" + itemNo);
+
+        if (typeof item.dataProvider.timeRangeProvider === 'undefined') {
+            item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
+        }
         item.dataProvider = Vis.create(
             item.dataProvider,
             item.dataProvider.name || 'undefined-item-data-provider'
         );
-        // item.dataProvider.on('update', function(e) {
-        //     _this._updateItem(itemNo);
-        // });
+        item.dataProvider.on('update', function(e) {
+            _this._updateItemData(itemNo);
+        });
 
         if (!item.filters) {
             item.filters = [];
@@ -280,10 +313,9 @@ Vis.blocks['i-chart'] = {
     _updateItemData: function(itemNo) {
         var _this = this,
             item = _this.content.items[itemNo],
-            xAxis = _this.content.xAxes[item.xAxisNo || 0] || Vis.error("No x-axis for item #" + itemNo),
             filters = item.filters;
 
-        item.rawData = item.dataProvider.get(xAxis.scale.inputMin, xAxis.scale.inputMax);
+        item.rawData = item.dataProvider.get();
 
         var data = {};
         $.each(item.rawData, function(name, arr) {
@@ -295,6 +327,7 @@ Vis.blocks['i-chart'] = {
         item.data = data;
 
         // override me
+        this.render();
     },
 
     _initItems: function() {
@@ -445,14 +478,6 @@ Vis.blocks['i-chart'] = {
     },
 
     afterRender: function() {
-        // override me
-    },
-
-    render: function() {
-        if (this._init != -1) {
-            return;
-        }
-
         // override me
     },
 

@@ -23,7 +23,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         }
         // this._renderLayers();
 
-        TaskScheduler.run(TaskScheduler.PRIO_DATA, this.renderTasks);
+        this.render();
     },
 
     updateXAxisRange: function(xAxisNo) {
@@ -153,6 +153,14 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             yAxis.visObject = Vis(yAxis.$object, 'b-axis');
         }
         layout.empty().append($tr);
+    },
+
+    render: function() {
+        if (!this.renderTasks) {
+            return;
+        }
+
+        TaskScheduler.run(TaskScheduler.PRIO_DATA, this.renderTasks);
     },
 
     renderObjects: function() {

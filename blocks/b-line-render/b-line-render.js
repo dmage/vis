@@ -27,10 +27,8 @@ Vis.blocks['b-line-render'] = {
             mozilla = (navigator.oscpu || "").indexOf('Linux') > 0 &&
                 navigator.userAgent.indexOf('Firefox') > 0;
 
-        xData = item.data.x;
-        yData = item.data.y;
-        console.log(xData, yData);
-        console.log(this.params, xAxis.scale);
+        xData = item.data.x; // FIXME
+        yData = item.data.y; // FIXME
         //console.time('render ' + itemNo);
 
         if (canvas) {

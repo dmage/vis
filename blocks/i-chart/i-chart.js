@@ -271,9 +271,32 @@ Vis.blocks['i-chart'] = {
     _initItem: function(itemNo) {
         var _this = this,
             tAxes = _this.content.tAxes,
+            xAxes = _this.content.xAxes,
+            yAxes = _this.content.yAxes,
             item = _this.content.items[itemNo];
 
-        item.tAxis = tAxes[item.tAxisNo || 0] || Vis.error("No t-axis for item #" + itemNo);
+        if (typeof item.tAxisNo === 'undefined') {
+            item.tAxisNo = 0;
+        }
+        item.tAxis = tAxes[item.tAxisNo] || Vis.error("No t-axis for item #" + itemNo);
+
+        if (typeof item.xAxisNo === 'undefined') {
+            item.xAxisNo = 0;
+        }
+        item.xAxis = xAxes[item.xAxisNo] || Vis.error("No x-axis for item #" + itemNo);
+
+        if (typeof item.yAxisNo === 'undefined') {
+            item.yAxisNo = 0;
+        }
+        item.yAxis = yAxes[item.yAxisNo] || Vis.error("No y-axis for item #" + itemNo);
+
+        if (typeof item.color === 'undefined') {
+            item.color = _this.colorScheme.get(itemNo);
+        }
+
+        if (typeof item.units === 'undefined') {
+            item.units = "";
+        }
 
         if (typeof item.dataProvider.timeRangeProvider === 'undefined') {
             item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
@@ -294,14 +317,6 @@ Vis.blocks['i-chart'] = {
                 item.filters[i],
                 item.filters[i].name
             );
-        }
-
-        if (typeof item.color === 'undefined') {
-            item.color = _this.colorScheme.get(itemNo);
-        }
-
-        if (typeof item.units === 'undefined') {
-            item.units = "";
         }
 
         item.renderData = {};

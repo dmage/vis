@@ -91,8 +91,11 @@ Vis.blocks['i-scale-linear'] = {
         delta = rounded_delta*Math.pow(10, l - 2);
 
         var result = [],
-            x = Math.ceil(this.inputMin/delta)*delta;
-        while (x <= this.inputMax) {
+            xMin = Math.ceil(this.inputMin/delta)*delta,
+            xMax = Math.floor(this.inputMax/delta)*delta,
+            x = xMin,
+            steps = Math.round((xMax - xMin)/delta) + 1;
+        for (i = 0; i < steps; ++i) {
             result.push(x);
             x += delta;
         }

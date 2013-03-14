@@ -9,6 +9,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.__base.init.apply(this, arguments);
 
         this.renderObjects();
+        this.initLayers();
         this.updateDimensions();
 
         var xAxes = this.content.xAxes,
@@ -20,6 +21,17 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         for (i = 0, l = yAxes.length; i < l; ++i) {
             this._renderYAxis(i);
         }
+        // this._renderLayers();
+
+        TaskScheduler.run(TaskScheduler.PRIO_DATA, this.renderTasks);
+    },
+
+    updateXAxisRange: function(xAxisNo) {
+        var _this = this,
+            xAxes = _this.content.xAxes,
+            xAxis = xAxes[xAxisNo];
+
+        /* adjust canvas position */
     },
 
     renderXAxis: function(xAxisNo, ticks) {
@@ -41,6 +53,45 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         if (yAxis.visObject) {
             yAxis.visObject.update(yAxis.pos, ticks);
+        }
+    },
+
+    initLayersForOverlay: function(overlayNo) {
+        var _this = this,
+            overlays = _this.content.overlays,
+            layers = _this.content.layers,
+            overlay = overlays[overlayNo];
+            request = overlay.layersRequest();
+
+        var localLayers = [];
+        for (var i = 0, l = request.length; i < l; ++i) {
+            var layer = request[i];
+
+            var $canvas = $(Vis.render({
+                tag: 'canvas',
+                cls: 'b-chart__canvas'
+            }));
+            _this.$clippedViewport.append($canvas);
+
+            layer.canvas = $canvas;
+            layer.ctx = layer.canvas.get(0).getContext('2d');
+
+            localLayers.push(layer);
+            layers.push(layer);
+        }
+
+        _this.renderTasks.push(function(sched) {
+            overlay.draw(sched, localLayers);
+        });
+    },
+
+    initLayers: function() {
+        var _this = this,
+            overlays = _this.content.overlays;
+
+        _this.renderTasks = [];
+        for (var i = 0, l = overlays.length; i < l; ++i) {
+            _this.initLayersForOverlay(i);
         }
     },
 
@@ -139,7 +190,14 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                             {
                                 tag: 'td',
                                 cls: 'b-9__mc',
-                                content: { cls: 'b-chart__viewport' }
+                                content: {
+                                    content: {
+                                        cls: 'b-chart__viewport',
+                                        content: {
+                                            cls: 'b-chart__clipped-viewport'
+                                        }
+                                    }
+                                }
                             },
                             {
                                 tag: 'td',
@@ -170,6 +228,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.renderXAxes('bottom', $('.b-9__bc .b-layout', $object), 'append');
 
         this.$viewport = $('.b-chart__viewport', $object);
+        this.$clippedViewport = $('.b-chart__clipped-viewport', $object);
     },
 
     updateDimensions: function() {
@@ -180,6 +239,19 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         dim.width = this.$viewport.width();
 
         this._applySize();
+    },
+
+    applySize: function() {
+        var _this = this,
+            dim = _this.dimensions,
+            layers = _this.content.layers;
+
+        this.$viewport.css('height', dim.height + 'px');
+        for (var i = 0, l = layers.length; i < l; ++i) {
+            var layer = layers[i];
+            layer.canvas.attr('width', dim.width);
+            layer.canvas.attr('height', dim.height);
+        }
     }
 });
 

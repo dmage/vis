@@ -11,7 +11,9 @@ BLOCKS=\
 	i-time-range-provider \
 	i-current-time-range-provider \
 	i-scale-linear \
-	b-chart
+	i-math-data-provider \
+	b-chart \
+	b-grid-overlay
 
 SOURCES=\
 	$(foreach module,$(MODULES),modules/$(module).js) \

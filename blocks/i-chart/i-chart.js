@@ -13,6 +13,13 @@ Vis.blocks['i-chart'] = {
         };
 
         params = params || {};
+
+        var colorScheme = params.colorScheme || {};
+        _this.colorScheme = Vis.create(
+            colorScheme,
+            colorScheme.name || 'i-tango-color-scheme'
+        );
+
         _this.content = {
             tAxes: params.tAxes || [],
             xAxes: params.xAxes || [],
@@ -22,12 +29,6 @@ Vis.blocks['i-chart'] = {
             layers: []
         };
         _this._initContent();
-
-        var colorScheme = params.colorScheme || {};
-        _this.colorScheme = Vis.create(
-            colorScheme,
-            colorScheme.name || 'i-tango-color-scheme'
-        );
 
         // _this.applySize();
         // _this.initResize();
@@ -240,30 +241,103 @@ Vis.blocks['i-chart'] = {
         _this.initYAxes();
     },
 
+    _initItem: function(itemNo) {
+        var _this = this,
+            item = _this.content.items[itemNo];
+
+        item.dataProvider = Vis.create(
+            item.dataProvider,
+            item.dataProvider.name || 'undefined-item-data-provider'
+        );
+        // item.dataProvider.on('update', function(e) {
+        //     _this._updateItem(itemNo);
+        // });
+
+        if (!item.filters) {
+            item.filters = [];
+        }
+        for (var i = 0, l = item.filters.length; i < l; ++i) {
+            item.filters[i] = Vis.create(
+                item.filters[i],
+                item.filters[i].name
+            );
+        }
+
+        if (typeof item.color === 'undefined') {
+            item.color = _this.colorScheme.get(itemNo);
+        }
+
+        if (typeof item.units === 'undefined') {
+            item.units = "";
+        }
+
+        item.renderData = {};
+
+        _this._updateItemData(itemNo);
+        // _requestItemData?
+    },
+
+    _updateItemData: function(itemNo) {
+        var _this = this,
+            item = _this.content.items[itemNo],
+            xAxis = _this.content.xAxes[item.xAxisNo || 0] || Vis.error("No x-axis for item #" + item.xAxisNo),
+            filters = item.filters;
+
+        item.rawData = item.dataProvider.get(xAxis.scale.inputMin, xAxis.scale.inputMax);
+
+        var data = {};
+        $.each(item.rawData, function(name, arr) {
+            data[name] = arr.slice();
+        });
+        for (var i = 0, l = filters.length; i < l; ++i) {
+            data = filters[i].run(item, data);
+        }
+        item.data = data;
+
+        // override me
+    },
+
+    _initItems: function() {
+        var _this = this,
+            items = _this.content.items;
+
+        for (var itemNo = 0, l = items.length; itemNo < l; ++itemNo) {
+            _this._initItem(itemNo);
+        }
+    },
+
+    initOverlay: function(overlayNo) { /* override me */ },
+    _initOverlay: function(overlayNo) {
+        var _this = this,
+            overlays = _this.content.overlays,
+            overlay = overlays[overlayNo];
+
+        overlay.dimensions = _this.dimensions;
+        overlay.content = _this.content;
+        overlays[overlayNo] = Vis.create(
+            overlay,
+            overlay.name || 'undefined-overlay'
+        );
+
+        _this.initOverlay(overlayNo);
+    },
+
     _initOverlays: function() {
         var _this = this,
             overlays = _this.content.overlays;
 
         for (var i = 0, l = overlays.length; i < l; ++i) {
-            var overlay = overlays[i];
-            overlay.dimensions = _this.dimensions;
-            overlay.content = _this.content;
-            overlays[i] = Vis.create(
-                overlay,
-                overlay.name || 'undefined-overlay'
-            );
+            _this._initOverlay(i);
         }
     },
-
-    initLayers: function() { /* override me */ },
 
     initContent: function () { /* override me */ },
     _initContent: function () {
         this._initTAxes();
         this._initXAxes();
         this._initYAxes();
+        this._initItems();
         this._initOverlays();
-        this.initLayers();
 
         this.initContent();
     },
@@ -283,6 +357,8 @@ Vis.blocks['i-chart'] = {
         for (i = 0, l = yAxes.length; i < l; ++i) {
             yAxes[i].scale.output(0, dim.height - 1);
         }
+
+        _this.applySize();
     },
 
     initResize: function() {
@@ -319,37 +395,6 @@ Vis.blocks['i-chart'] = {
         _this._updateInit();
     },
 
-    _initItem: function(itemNo) {
-        var _this = this,
-            item = _this.content.items[itemNo];
-
-        item.dataProvider = Vis(
-            item.dataProvider,
-            item.dataProvider.name
-        );
-        item.dataProvider.on('update', function(e) {
-            _this._updateItem(itemNo);
-        });
-
-        item.filters || (item.filters = []);
-        for (var i = 0, l = item.filters.length; i < l; ++i) {
-            item.filters[i] = Vis(
-                item.filters[i],
-                item.filters[i].name
-            );
-        }
-
-        typeof item.color !== 'undefined' || (item.color = _this.colorScheme.get(itemNo));
-        typeof item.units !== 'undefined' || (item.units = "");
-
-        item.renderData = {};
-
-        if (_this.content.xAxes) {
-            _this._updateItemData(item);
-            _this._requestItemData(item);
-        }
-    },
-
     _updateItem: function(itemNo) {
         var _this = this,
             item = _this.content.items[itemNo];
@@ -359,47 +404,12 @@ Vis.blocks['i-chart'] = {
         _this.renderItem(itemNo);
     },
 
-    _updateItemData: function(item) {
-        var _this = this,
-            xAxis = _this.content.xAxes[item.xAxis || 0] || _this.content.xAxes[0],
-            filters = item.filters;
-
-        item.rawData = item.dataProvider.get(xAxis.scale.inputMin, xAxis.scale.inputMax);
-
-        var data = {};
-        $.each(item.rawData, function(name, arr) {
-            data[name] = arr.slice();
-        });
-        for (var i = 0, l = filters.length; i < l; ++i) {
-            data = filters[i].run(item, data);
-        }
-        item.data = data;
-
-        // override me
-    },
-
     _requestItemData: function(item) {
         var _this = this,
             xAxis = _this.content.xAxes[item.xAxis || 0] || _this.content.xAxes[0];
 
         item.ready = false;
         item.dataProvider.range(xAxis.scale.inputMin, xAxis.scale.inputMax);
-    },
-
-    setItems: function(items) {
-        var _this = this;
-
-        _this.content.items = items;
-        for (var i = 0, l = _this.content.items.length; i < l; ++i) {
-            _this._initItem(i);
-        }
-
-        if (this._initState.layers) {
-            this._initLayers();
-        }
-
-        _this._initState.items = true;
-        _this._updateInit();
     },
 
     _runProcessors: function() {

@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <title>Vis.js</title>
 <link rel="stylesheet" type="text/css" href="blocks/b-axis/b-axis.css">
+<link rel="stylesheet" type="text/css" href="blocks/b-chart/b-chart.css">
 <link rel="stylesheet" type="text/css" href="b-box.css">
 <link rel="stylesheet" type="text/css" href="b-9.css">
 <link rel="stylesheet" type="text/css" href="b-layout.css">
@@ -48,6 +49,12 @@ $(function() {
                 { rangeProvider: { name: 'i-static-range-provider' } },
                 { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' },
                 { rangeProvider: { name: 'i-static-range-provider' } }
+            ],
+            items: [
+                { dataProvider: { name: 'i-math-data-provider'}, xAxisNo: 1 }
+            ],
+            overlays: [
+                { name: 'b-grid-overlay' }
             ]
         },
         'b-chart'

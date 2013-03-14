@@ -13,7 +13,9 @@ BLOCKS=\
 	i-scale-linear \
 	i-math-data-provider \
 	b-chart \
-	b-grid-overlay
+	b-grid-overlay \
+	b-render-overlay \
+	b-line-render
 
 SOURCES=\
 	$(foreach module,$(MODULES),modules/$(module).js) \

@@ -16,3 +16,8 @@
     right: 0;
     top: 0;
 }
+
+.b-chart__canvas
+{
+    position: absolute;
+}

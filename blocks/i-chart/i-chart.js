@@ -280,7 +280,7 @@ Vis.blocks['i-chart'] = {
     _updateItemData: function(itemNo) {
         var _this = this,
             item = _this.content.items[itemNo],
-            xAxis = _this.content.xAxes[item.xAxisNo || 0] || Vis.error("No x-axis for item #" + item.xAxisNo),
+            xAxis = _this.content.xAxes[item.xAxisNo || 0] || Vis.error("No x-axis for item #" + itemNo),
             filters = item.filters;
 
         item.rawData = item.dataProvider.get(xAxis.scale.inputMin, xAxis.scale.inputMax);

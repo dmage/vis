@@ -22,7 +22,7 @@ $(function() {
             tAxes: [
                 {
                     rangeProvider: {
-                        name: 'i-current-time-range-provider',
+                        name: 'i-current-time-range-provider'
                     },
                 },
                 {
@@ -38,10 +38,8 @@ $(function() {
                 { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
             ],
             yAxes: [
-                { rangeProvider: { name: 'i-data-range-provider' }, pos: 'left' },
-                { rangeProvider: { name: 'i-static-range-provider' } },
-                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' },
-                { rangeProvider: { name: 'i-static-range-provider' } }
+                { rangeProvider: { name: 'i-data-range-provider' }, pos: 'right' },
+                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' }
             ],
             items: [
                 { dataProvider: { name: 'i-math-data-provider', factor: 0.01, step: 3 }, xAxisNo: 1 },

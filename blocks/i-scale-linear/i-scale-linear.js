@@ -72,8 +72,17 @@ Vis.blocks['i-scale-linear'] = {
         if (units == 'unixtime') {
             factor = 1;
             volume = 60;
-        }
-        else {
+
+            if (delta > 0.8*factor*volume) {
+                factor *= volume;
+                volume = 60;
+            }
+
+            if (delta > 0.8*factor*volume) {
+                factor *= volume;
+                volume = 24;
+            }
+        } else {
             var l = Math.ceil(Math.log(delta)/Math.log(10));
             factor = Math.pow(10, l - 2);
             volume = 100;

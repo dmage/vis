@@ -77,9 +77,9 @@ Vis.blocks['b-line-render'] = {
             y = height - (yf(yData[i] + (shiftData[i] || 0)) + 0.5);
             if (prev === null) {
                 ctx.beginPath();
-                ctx.moveTo((x | 0) + 0.5, (y | 0) + 0.5);
+                ctx.moveTo(x, y);
             } else {
-                ctx.lineTo((x | 0) + 0.5, (y | 0) + 0.5);
+                ctx.lineTo(x, y);
             }
 
             ++dots;

@@ -296,15 +296,17 @@ Vis.blocks['i-chart'] = {
             yAxis.pos = 'right';
         }
 
-        if (typeof yAxis.items === 'undefined') {
-            var axisItems = [];
-            for (i = 0, l = items.length; i < l; ++i) {
-                var item = items[i];
-                if (item.yAxisNo != yAxisNo) continue;
+        var axisItems = [];
+        for (i = 0, l = items.length; i < l; ++i) {
+            var item = items[i];
+            if (item.yAxisNo != yAxisNo) continue;
 
-                axisItems.push(item);
-            }
-            yAxis.items = axisItems;
+            axisItems.push(item);
+        }
+        yAxis.items = axisItems;
+
+        if (typeof yAxis.rangeProvider.items === 'undefined') {
+            yAxis.rangeProvider.items = axisItems;
         }
 
         yAxis.rangeProvider = Vis.create(

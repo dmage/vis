@@ -10,6 +10,7 @@ BLOCKS=\
 	i-static-range-provider \
 	i-time-range-provider \
 	i-current-time-range-provider \
+	i-data-range-provider \
 	i-scale-linear \
 	i-math-data-provider \
 	i-hammy-data-provider \

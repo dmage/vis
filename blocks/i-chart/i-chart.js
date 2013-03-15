@@ -418,40 +418,6 @@ Vis.blocks['i-chart'] = {
         _this.applySize();
     },
 
-    initResize: function() {
-        // override me
-    },
-
-    setYAxes: function(yAxes) {
-        var _this = this;
-
-        _this._destroyYAxes();
-        _this.content.yAxes = yAxes;
-
-        for (var yAxisNo = 0, l = yAxes.length; yAxisNo < l; ++yAxisNo) {
-            _this._initYAxis(yAxisNo);
-        }
-        _this._initYAxes();
-
-        _this._initState.yAxes = true;
-        _this._updateInit();
-    },
-
-    setXAxes: function(xAxes) {
-        var _this = this;
-
-        _this._destroyXAxes();
-        _this.content.xAxes = xAxes;
-
-        for (var xAxisNo = 0, l = xAxes.length; xAxisNo < l; ++xAxisNo) {
-            _this._initXAxis(xAxisNo);
-        }
-        _this._initXAxes();
-
-        _this._initState.xAxes = true;
-        _this._updateInit();
-    },
-
     _updateItem: function(itemNo) {
         var _this = this,
             item = _this.content.items[itemNo];

@@ -7,35 +7,28 @@ var _voidElements = [
 ];
 
 var Vis = function(obj, block) {
-    return Vis.fn.init(obj, block);
+    return Vis.create(obj, block);
 }
 
-Vis.fn = Vis.prototype = {
-    version: 0.1,
-
-    constructor: Vis,
-    init: function(obj, block) {
-        if (typeof Vis.blocks[block] === 'undefined') {
-            this.error("Non-existent block " + block);
-        }
-
-        var v = Object.create(Vis.blocks[block]);
-        if (typeof v.init !== 'undefined') {
-            v.init(obj, block);
-        }
-        return v;
-    },
-
-    error: function(msg) {
-        throw new Error(msg);
-    },
-};
+Vis.version = 0.1;
 
 Vis.blocks = {};
 
-Vis.create = Vis;
+Vis.create = function(obj, block) {
+    if (typeof Vis.blocks[block] === 'undefined') {
+        Vis.error("Non-existent block " + block);
+    }
 
-Vis.error = Vis.fn.error;
+    var v = Object.create(Vis.blocks[block]);
+    if (typeof v.init !== 'undefined') {
+        v.init(obj, block);
+    }
+    return v;
+};
+
+Vis.error = function(msg) {
+    throw new Error(msg);
+};
 
 Vis.render = function(data) {
     if (data instanceof Array) {

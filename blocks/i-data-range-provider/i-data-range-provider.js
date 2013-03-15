@@ -4,6 +4,7 @@ Vis.blocks['i-data-range-provider'] = {
     init: function(params) {
         var _this = this;
         this.params = params;
+        this.xy = params.xy;
         this.items = params.items;
 
         console.log(this);
@@ -26,8 +27,8 @@ Vis.blocks['i-data-range-provider'] = {
             min = Number.POSITIVE_INFINITY,
             max = Number.NEGATIVE_INFINITY;
 
-        typeof minSliceName !== 'undefined' || (minSliceName = "y");
-        typeof maxSliceName !== 'undefined' || (maxSliceName = "y");
+        typeof minSliceName !== 'undefined' || (minSliceName = this.xy);
+        typeof maxSliceName !== 'undefined' || (maxSliceName = this.xy);
         typeof shiftSliceName !== 'undefined' || (shiftSliceName = "shift");
 
         for (var i = 0, l = this.items.length; i < l; ++i) {

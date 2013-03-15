@@ -224,6 +224,10 @@ Vis.blocks['i-chart'] = {
             axis.rangeProvider.timeRangeProvider = axis.tAxis.rangeProvider;
         }
 
+        if (typeof axis.rangeProvider.xy === 'undefined') {
+            axis.rangeProvider.xy = xy;
+        }
+
         if (typeof axis.rangeProvider.items === 'undefined') {
             axis.rangeProvider.items = axisItems;
         }

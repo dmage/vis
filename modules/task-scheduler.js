@@ -219,12 +219,15 @@ TaskScheduler.next = function(func) {
             console.log('locked for', (+new Date() - +this.lastTimeout), 'ms; releasing for events collecting...');
             setTimeout(function() {
                 _this.lastTimeout = new Date();
+                //console.log('taking lock...');
                 nextFunc.apply(_this, args);
             }, _this.collectTime);
         } else {
             nextFunc.apply(_this, args);
         }
     } else {
+        //console.log('releasing lock...');
+        console.log('locked for ', (+new Date() - +this.lastTimeout), 'ms');
         this.waitForNextTask();
     }
 };
@@ -268,6 +271,8 @@ TaskScheduler.waitForNextTask = function() {
         delete _this.waitTimeout;
     }
     if (waitTime <= 0) {
+        _this.lastTimeout = new Date();
+        //console.log('taking lock for new task...');
         _this.next();
     } else if (typeof waitTime !== 'undefined') {
         _this.waitTimeout = setTimeout(function() {

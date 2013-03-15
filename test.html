@@ -33,9 +33,9 @@ $(function() {
                 }
             ],
             xAxes: [
-                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
-                { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime" },
                 { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime", tAxisNo: 1 },
+                { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime" },
+                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
             ],
             yAxes: [
                 { rangeProvider: { name: 'i-data-range-provider' }, pos: 'left' },
@@ -53,7 +53,7 @@ $(function() {
                         key: 'sin'
                     },
                     tAxisNo: 1,
-                    xAxisNo: 2
+                    xAxisNo: 0
                 }
             ],
             overlays: [

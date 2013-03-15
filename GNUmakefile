@@ -1,5 +1,6 @@
 MODULES=\
 	core \
+	uniq-id \
 	task-scheduler \
 	units
 

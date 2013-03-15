@@ -181,52 +181,79 @@ Vis.blocks['i-chart'] = {
         }
     },
 
-    initXAxis: function(xAxisNo) { /* override me */ },
-    _initXAxis: function(xAxisNo) {
+    _initXYAxis: function(xy, XY, pos, no) {
         var _this = this,
-            xAxis = _this.content.xAxes[xAxisNo],
-            tAxes = _this.content.tAxes;
+            tAxes = _this.content.tAxes,
+            items = _this.content.items,
+            axis = _this.content[xy + 'Axes'][no],
+            i, l;
 
-        var scale = xAxis.scale || {};
-        xAxis.scale = Vis.create(
+        var scale = axis.scale || {};
+        axis.scale = Vis.create(
             scale,
             scale.name || 'i-scale-linear'
         );
 
-        if (typeof xAxis.units === 'undefined') {
-            xAxis.units = "";
+        if (typeof axis.units === 'undefined') {
+            axis.units = "";
         }
 
-        if (xAxis.pos !== 'top' && xAxis.pos !== 'bottom') {
-            xAxis.pos = 'bottom';
+        var validPos = false;
+        for (i = 0, l = pos.length; i < l; ++i) {
+            if (axis.pos === pos[i]) {
+                validPos = true;
+                break;
+            }
+        }
+        if (!validPos) {
+            axis.pos = pos[0];
         }
 
-        xAxis.tAxis = tAxes[xAxis.tAxisNo || 0] || Vis.error("No t-axis for x-axis #" + xAxisNo);
+        var axisItems = [];
+        for (i = 0, l = items.length; i < l; ++i) {
+            var item = items[i];
+            if (item[xy + 'AxisNo'] != no) continue;
 
-        if (typeof xAxis.rangeProvider.timeRangeProvider === 'undefined') {
-            xAxis.rangeProvider.timeRangeProvider = xAxis.tAxis.rangeProvider;
+            axisItems.push(item);
         }
-        xAxis.rangeProvider = Vis.create(
-            xAxis.rangeProvider,
-            xAxis.rangeProvider.name || 'undefined-x-range-provider'
+        axis.items = axisItems;
+
+        axis.tAxis = tAxes[axis.tAxisNo || 0] || Vis.error("No t-axis for " + xy + "-axis #" + no);
+
+        if (typeof axis.rangeProvider.timeRangeProvider === 'undefined') {
+            axis.rangeProvider.timeRangeProvider = axis.tAxis.rangeProvider;
+        }
+
+        if (typeof axis.rangeProvider.items === 'undefined') {
+            axis.rangeProvider.items = axisItems;
+        }
+
+        axis.rangeProvider = Vis.create(
+            axis.rangeProvider,
+            axis.rangeProvider.name || 'undefined-y-range-provider'
         );
 
-        if (typeof xAxis.processors === 'undefined') {
-            xAxis.processors = [];
+        if (typeof axis.processors === 'undefined') {
+            axis.processors = [];
         }
-        for (var i = 0, l = xAxis.processors.length; i < l; ++i) {
-            var processor = xAxis.processors[i];
+        for (i = 0, l = axis.processors.length; i < l; ++i) {
+            var processor = axis.processors[i];
             processor.dimensions = _this.dimensions;
             processor.content = _this.content;
-            xAxis.processors[i] = Vis.create(processor, processor.name);
+            axis.processors[i] = Vis.create(processor, processor.name);
         }
 
-        _this.initXAxis(xAxisNo);
+        _this['init' + XY + 'Axis'](no);
 
-        xAxis.rangeProvider.on('update', function() {
-            _this._updateXAxisRange(xAxisNo);
+        axis.rangeProvider.on('update', function() {
+            _this['_update' + XY + 'AxisRange'](no);
         });
-        _this._updateXAxisRange(xAxisNo);
+        _this['_update' + XY + 'AxisRange'](no);
+    },
+
+    initXAxis: function(xAxisNo) { /* override me */ },
+    _initXAxis: function(xAxisNo) {
+        this._initXYAxis('x', 'X', ['bottom', 'top'], xAxisNo);
     },
 
     updateXAxisRange: function(xAxisNo) { /* override me */ },
@@ -277,59 +304,7 @@ Vis.blocks['i-chart'] = {
 
     initYAxis: function(yAxisNo) { /* override me */ },
     _initYAxis: function(yAxisNo) {
-        var _this = this,
-            items = _this.content.items,
-            yAxis = _this.content.yAxes[yAxisNo],
-            i, l;
-
-        var scale = yAxis.scale || {};
-        yAxis.scale = Vis.create(
-            scale,
-            scale.name || 'i-scale-linear'
-        );
-
-        if (typeof yAxis.units === 'undefined') {
-            yAxis.units = "";
-        }
-
-        if (yAxis.pos !== 'left' && yAxis.pos !== 'right') {
-            yAxis.pos = 'right';
-        }
-
-        var axisItems = [];
-        for (i = 0, l = items.length; i < l; ++i) {
-            var item = items[i];
-            if (item.yAxisNo != yAxisNo) continue;
-
-            axisItems.push(item);
-        }
-        yAxis.items = axisItems;
-
-        if (typeof yAxis.rangeProvider.items === 'undefined') {
-            yAxis.rangeProvider.items = axisItems;
-        }
-
-        yAxis.rangeProvider = Vis.create(
-            yAxis.rangeProvider,
-            yAxis.rangeProvider.name || 'undefined-y-range-provider'
-        );
-
-        if (typeof yAxis.processors === 'undefined') {
-            yAxis.processors = [];
-        }
-        for (i = 0, l = yAxis.processors.length; i < l; ++i) {
-            var processor = yAxis.processors[i];
-            processor.dimensions = _this.dimensions;
-            processor.content = _this.content;
-            yAxis.processors[i] = Vis.create(processor, processor.name);
-        }
-
-        _this.initXAxis(yAxisNo);
-
-        yAxis.rangeProvider.on('update', function() {
-            _this._updateYAxisRange(yAxisNo);
-        });
-        _this._updateYAxisRange(yAxisNo);
+        this._initXYAxis('y', 'Y', ['right', 'left'], yAxisNo);
     },
 
     updateYAxisRange: function(yAxisNo) { /* override me */ },

@@ -35,14 +35,19 @@ $(function() {
                 {
                     rangeProvider: {
                         name: 'i-current-time-range-provider',
+                    },
+                },
+                {
+                    rangeProvider: {
+                        name: 'i-current-time-range-provider',
+                        period: 300
                     }
                 }
             ],
             xAxes: [
                 { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
                 { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime" },
-                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' },
-                { rangeProvider: { name: 'i-static-range-provider' } }
+                { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime", tAxisNo: 1 },
             ],
             yAxes: [
                 { rangeProvider: { name: 'i-static-range-provider', min: -1, max: 1 }, pos: 'left' },
@@ -51,7 +56,17 @@ $(function() {
                 { rangeProvider: { name: 'i-static-range-provider' } }
             ],
             items: [
-                { dataProvider: { name: 'i-math-data-provider', factor: 0.01, step: 3 }, xAxisNo: 1 }
+                { dataProvider: { name: 'i-math-data-provider', factor: 0.01, step: 3 }, xAxisNo: 1 },
+                {
+                    dataProvider: {
+                        name: 'i-hammy-data-provider',
+                        url: 'http://localhost/data',
+                        object: 'test',
+                        key: 'sin'
+                    },
+                    tAxisNo: 1,
+                    xAxisNo: 2
+                }
             ],
             overlays: [
                 { name: 'b-grid-overlay' },

@@ -12,6 +12,7 @@ BLOCKS=\
 	i-current-time-range-provider \
 	i-scale-linear \
 	i-math-data-provider \
+	i-hammy-data-provider \
 	b-chart \
 	b-grid-overlay \
 	b-render-overlay \

@@ -19,22 +19,23 @@ Vis.blocks['i-math-data-provider'] = {
     },
 
     get: function() {
-        var xbegin = this.range.min,
-            xend = this.range.max;
+        var tbegin = this.range.min,
+            tend = this.range.max;
 
         var step = this.params.step || 1;
         var f = this[this.params.func || 'sin'] || this.sin;
         var factor = this.params.factor || 1;
 
-        var x = Math.ceil(xbegin / step) * step;
+        var t = Math.ceil(tbegin / step) * step;
         var i = 0;
-        var length = Math.floor((xend - x) / step);
+        var length = Math.floor((tend - t) / step);
         var xData = new Array(length);
         var yData = new Array(length);
-        while (x < xend) {
-            xData[i] = x;
-            yData[i] = f(x * factor);
-            x += step;
+        while (t < tend) {
+            var tmp = f.call(this, t * factor);
+            xData[i] = tmp.x;
+            yData[i] = tmp.y;
+            t += step;
             i += 1;
         }
         return {
@@ -43,20 +44,27 @@ Vis.blocks['i-math-data-provider'] = {
         };
     },
 
-    // range: function(begin, end) {
-    //     this.trigger('update');
-    // },
+    sin: function(t) {
+        return { x: t, y: Math.sin(t) };
+    },
 
-    sin: Math.sin,
-
-    cos: Math.cos,
+    cos: function(t) {
+        return { x: t, y: Math.cos(t) };
+    },
 
     sin2: function(x) {
-        return Math.pow(Math.sin(x), 2);
+        return { x: t, y: Math.pow(Math.sin(t), 2) };
     },
 
     cos2: function(x) {
-        return Math.pow(Math.cos(x), 2);
+        return { x: t, y: Math.pow(Math.cos(t), 2) };
+    },
+
+    lissajous: function(t) {
+        return {
+            x: Math.sin(this.params.a * t),
+            y: Math.sin(this.params.b * t)
+        };
     }
 };
 

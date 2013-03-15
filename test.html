@@ -22,37 +22,29 @@ $(function() {
             tAxes: [
                 {
                     rangeProvider: {
-                        name: 'i-current-time-range-provider'
-                    },
-                },
-                {
-                    rangeProvider: {
                         name: 'i-current-time-range-provider',
-                        period: 300
-                    }
+                        period: 10,
+                        delay: 100
+                    },
                 }
             ],
             xAxes: [
-                { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime", tAxisNo: 1 },
-                { rangeProvider: { name: 'i-time-range-provider' }, units: "unixtime" },
-                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'top' }
+                { rangeProvider: { name: 'i-static-range-provider', min: -1, max: 1 } }
             ],
             yAxes: [
-                { rangeProvider: { name: 'i-data-range-provider' }, pos: 'right' },
-                { rangeProvider: { name: 'i-static-range-provider' }, pos: 'left' }
+                { rangeProvider: { name: 'i-static-range-provider', min: -1, max: 1 } }
             ],
             items: [
-                { dataProvider: { name: 'i-math-data-provider', factor: 0.01, step: 3 }, xAxisNo: 1 },
                 {
                     dataProvider: {
-                        name: 'i-hammy-data-provider',
-                        url: 'http://localhost/data',
-                        object: 'test',
-                        key: 'sin'
-                    },
-                    tAxisNo: 1,
-                    xAxisNo: 0
-                }
+                        name: 'i-math-data-provider',
+                        factor: 0.5,
+                        step: 0.05,
+                        func: 'lissajous',
+                        a: 2,
+                        b: 5
+                    }
+                },
             ],
             overlays: [
                 { name: 'b-grid-overlay' },

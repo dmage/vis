@@ -90,9 +90,17 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             overlays = _this.content.overlays;
 
         _this.renderTasks = [];
+        _this.renderTasks.push(function(sched) {
+            _this._beforeRender();
+            sched.next();
+        });
         for (var i = 0, l = overlays.length; i < l; ++i) {
             _this.initLayersForOverlay(i);
         }
+        _this.renderTasks.push(function(sched) {
+            _this._afterRender();
+            sched.next();
+        });
     },
 
     renderXAxes: function(pos, layout, method) {

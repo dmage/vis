@@ -278,7 +278,9 @@ Vis.blocks['i-chart'] = {
     initYAxis: function(yAxisNo) { /* override me */ },
     _initYAxis: function(yAxisNo) {
         var _this = this,
-            yAxis = _this.content.yAxes[yAxisNo];
+            items = _this.content.items,
+            yAxis = _this.content.yAxes[yAxisNo],
+            i, l;
 
         var scale = yAxis.scale || {};
         yAxis.scale = Vis.create(
@@ -294,6 +296,17 @@ Vis.blocks['i-chart'] = {
             yAxis.pos = 'right';
         }
 
+        if (typeof yAxis.items === 'undefined') {
+            var axisItems = [];
+            for (i = 0, l = items.length; i < l; ++i) {
+                var item = items[i];
+                if (item.yAxisNo != yAxisNo) continue;
+
+                axisItems.push(item);
+            }
+            yAxis.items = axisItems;
+        }
+
         yAxis.rangeProvider = Vis.create(
             yAxis.rangeProvider,
             yAxis.rangeProvider.name || 'undefined-y-range-provider'
@@ -302,7 +315,7 @@ Vis.blocks['i-chart'] = {
         if (typeof yAxis.processors === 'undefined') {
             yAxis.processors = [];
         }
-        for (var i = 0, l = yAxis.processors.length; i < l; ++i) {
+        for (i = 0, l = yAxis.processors.length; i < l; ++i) {
             var processor = yAxis.processors[i];
             processor.dimensions = _this.dimensions;
             processor.content = _this.content;
@@ -443,32 +456,25 @@ Vis.blocks['i-chart'] = {
         for (var yAxisNo = 0, l = yAxes.length; yAxisNo < l; ++yAxisNo) {
             var yAxis = yAxes[yAxisNo];
 
-            var axisItems = [];
-            for (var i = 0, m = items.length; i < m; ++i) {
-                var item = items[i];
-                if (item.yAxis != yAxisNo) continue;
-
-                item.renderData = item.data;
-                axisItems.push(item);
+            for (var i = 0; i < yAxis.items.length; ++i) {
+                yAxis.items[i].renderData = yAxis.items[i].data;
             }
 
-            for (var i = 0, m = yAxis.processors.length; i < m; ++i) {
-                yAxis.processors[i].run(axisItems);
+            for (var j = 0, m = yAxis.processors.length; j < m; ++j) {
+                yAxis.processors[j].run(yAxis.items);
             }
 
-            var range = yAxis.rangeProvider.get(axisItems);
-            _this._updateYAxisRange(yAxisNo, range);
+            for (var k = 0; k < yAxis.items.length; ++k) {
+                yAxis.items[k].trigger('renderData');
+            }
         }
     },
 
-    beforeRender: function() {
+    _beforeRender: function() {
         this._runProcessors();
-
-        // override me
     },
 
-    afterRender: function() {
-        // override me
+    _afterRender: function() {
     },
 
     renderItem: function(itemNo) {

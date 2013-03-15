@@ -86,6 +86,101 @@ Vis.blocks['i-chart'] = {
         _this.initTAxes();
     },
 
+    _initItem: function(itemNo) {
+        var _this = this,
+            tAxes = _this.content.tAxes,
+            xAxes = _this.content.xAxes,
+            yAxes = _this.content.yAxes,
+            item = _this.content.items[itemNo];
+
+        if (typeof item.tAxisNo === 'undefined') {
+            item.tAxisNo = 0;
+        }
+        item.tAxis = tAxes[item.tAxisNo] || Vis.error("No t-axis for item #" + itemNo);
+
+        if (typeof item.xAxisNo === 'undefined') {
+            item.xAxisNo = 0;
+        }
+        item.xAxis = xAxes[item.xAxisNo] || Vis.error("No x-axis for item #" + itemNo);
+
+        if (typeof item.yAxisNo === 'undefined') {
+            item.yAxisNo = 0;
+        }
+        item.yAxis = yAxes[item.yAxisNo] || Vis.error("No y-axis for item #" + itemNo);
+
+        if (typeof item.color === 'undefined') {
+            item.color = _this.colorScheme.get(itemNo);
+        }
+
+        if (typeof item.units === 'undefined') {
+            item.units = "";
+        }
+
+        if (typeof item.dataProvider.timeRangeProvider === 'undefined') {
+            item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
+        }
+        item.dataProvider = Vis.create(
+            item.dataProvider,
+            item.dataProvider.name || 'undefined-item-data-provider'
+        );
+        item.dataProvider.on('update', function(e) {
+            _this._updateItemData(itemNo);
+        });
+
+        if (!item.filters) {
+            item.filters = [];
+        }
+        for (var i = 0, l = item.filters.length; i < l; ++i) {
+            item.filters[i] = Vis.create(
+                item.filters[i],
+                item.filters[i].name
+            );
+        }
+
+        item.on = function(action, callback) {
+            $(item).on(action + '.vis', callback);
+        };
+        item.trigger = function(action) {
+            $(item).trigger(action + '.vis');
+        };
+
+        item.renderData = {};
+
+        _this._updateItemData(itemNo);
+        // _requestItemData?
+    },
+
+    _updateItemData: function(itemNo) {
+        var _this = this,
+            item = _this.content.items[itemNo],
+            filters = item.filters;
+
+        item.rawData = item.dataProvider.get();
+
+        var data = {};
+        $.each(item.rawData, function(name, arr) {
+            data[name] = arr.slice();
+        });
+        for (var i = 0, l = filters.length; i < l; ++i) {
+            data = filters[i].run(item, data);
+        }
+        item.data = data;
+
+        item.trigger('data');
+
+        // override me
+        this.render();
+    },
+
+    _initItems: function() {
+        var _this = this,
+            items = _this.content.items;
+
+        for (var itemNo = 0, l = items.length; itemNo < l; ++itemNo) {
+            _this._initItem(itemNo);
+        }
+    },
+
     initXAxis: function(xAxisNo) { /* override me */ },
     _initXAxis: function(xAxisNo) {
         var _this = this,
@@ -268,101 +363,6 @@ Vis.blocks['i-chart'] = {
         _this.initYAxes();
     },
 
-    _initItem: function(itemNo) {
-        var _this = this,
-            tAxes = _this.content.tAxes,
-            xAxes = _this.content.xAxes,
-            yAxes = _this.content.yAxes,
-            item = _this.content.items[itemNo];
-
-        if (typeof item.tAxisNo === 'undefined') {
-            item.tAxisNo = 0;
-        }
-        item.tAxis = tAxes[item.tAxisNo] || Vis.error("No t-axis for item #" + itemNo);
-
-        if (typeof item.xAxisNo === 'undefined') {
-            item.xAxisNo = 0;
-        }
-        item.xAxis = xAxes[item.xAxisNo] || Vis.error("No x-axis for item #" + itemNo);
-
-        if (typeof item.yAxisNo === 'undefined') {
-            item.yAxisNo = 0;
-        }
-        item.yAxis = yAxes[item.yAxisNo] || Vis.error("No y-axis for item #" + itemNo);
-
-        if (typeof item.color === 'undefined') {
-            item.color = _this.colorScheme.get(itemNo);
-        }
-
-        if (typeof item.units === 'undefined') {
-            item.units = "";
-        }
-
-        if (typeof item.dataProvider.timeRangeProvider === 'undefined') {
-            item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
-        }
-        item.dataProvider = Vis.create(
-            item.dataProvider,
-            item.dataProvider.name || 'undefined-item-data-provider'
-        );
-        item.dataProvider.on('update', function(e) {
-            _this._updateItemData(itemNo);
-        });
-
-        if (!item.filters) {
-            item.filters = [];
-        }
-        for (var i = 0, l = item.filters.length; i < l; ++i) {
-            item.filters[i] = Vis.create(
-                item.filters[i],
-                item.filters[i].name
-            );
-        }
-
-        item.on = function(action, callback) {
-            $(item).on(action + '.vis', callback);
-        };
-        item.trigger = function(action) {
-            $(item).trigger(action + '.vis');
-        };
-
-        item.renderData = {};
-
-        _this._updateItemData(itemNo);
-        // _requestItemData?
-    },
-
-    _updateItemData: function(itemNo) {
-        var _this = this,
-            item = _this.content.items[itemNo],
-            filters = item.filters;
-
-        item.rawData = item.dataProvider.get();
-
-        var data = {};
-        $.each(item.rawData, function(name, arr) {
-            data[name] = arr.slice();
-        });
-        for (var i = 0, l = filters.length; i < l; ++i) {
-            data = filters[i].run(item, data);
-        }
-        item.data = data;
-
-        item.trigger('data');
-
-        // override me
-        this.render();
-    },
-
-    _initItems: function() {
-        var _this = this,
-            items = _this.content.items;
-
-        for (var itemNo = 0, l = items.length; itemNo < l; ++itemNo) {
-            _this._initItem(itemNo);
-        }
-    },
-
     initOverlay: function(overlayNo) { /* override me */ },
     _initOverlay: function(overlayNo) {
         var _this = this,
@@ -391,9 +391,9 @@ Vis.blocks['i-chart'] = {
     initContent: function () { /* override me */ },
     _initContent: function () {
         this._initTAxes();
+        this._initItems();
         this._initXAxes();
         this._initYAxes();
-        this._initItems();
         this._initOverlays();
 
         this.initContent();

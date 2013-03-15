@@ -1,4 +1,4 @@
-(function(Vis) {
+(function($, Vis) {
 "use strict";
 
 var busyDelay = 2500;
@@ -319,6 +319,13 @@ Vis.blocks['i-chart'] = {
             );
         }
 
+        item.on = function(action, callback) {
+            $(item).on(action + '.vis', callback);
+        };
+        item.trigger = function(action) {
+            $(item).trigger(action + '.vis');
+        };
+
         item.renderData = {};
 
         _this._updateItemData(itemNo);
@@ -340,6 +347,8 @@ Vis.blocks['i-chart'] = {
             data = filters[i].run(item, data);
         }
         item.data = data;
+
+        item.trigger('data');
 
         // override me
         this.render();
@@ -505,4 +514,4 @@ Vis.blocks['i-chart'] = {
     }
 };
 
-})(Vis);
+})(jQuery, Vis);

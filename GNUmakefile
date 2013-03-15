@@ -20,9 +20,7 @@ BLOCKS=\
 
 SOURCES=\
 	$(foreach module,$(MODULES),modules/$(module).js) \
-	$(wildcard $(foreach block,$(BLOCKS),blocks/$(block)/$(block).js)) \
-	blocks/b-1.js \
-	blocks/b-2.js
+	$(wildcard $(foreach block,$(BLOCKS),blocks/$(block)/$(block).js))
 
 .PHONY: all
 all: vis.js

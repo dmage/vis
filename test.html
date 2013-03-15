@@ -16,18 +16,6 @@
 $(function() {
     console.log(Units.format(+new Date()/1000, 'unixtime'));
 
-    Vis($('.b-axis'), 'b-axis')
-        .update('bottom', [
-            { offset: 0, label: '0' },
-            { offset: 100, label: '100' },
-            { offset: 200, label: '200' },
-            { offset: 300, label: '300' },
-            { offset: 400, label: '400' },
-            { offset: 500, label: '500' }
-        ]);
-
-    Vis($('.b-2'), 'b-2').update();
-
     Vis(
         {
             $object: $('.b-chart'),
@@ -111,8 +99,6 @@ $(function() {
 </tr>
 </table>
 </body>
-
-<div class="b-2"></div>
 
 <div class="b-box" style="position: relative; width: 640px; height: 480px"><div class="b-loading"><i class="b-loading__bar"></i><i class="b-loading__bar"></i><i class="b-loading__bar"></i></div></div>
 

@@ -68,10 +68,18 @@ Vis.blocks['i-scale-linear'] = {
             return this.dayTicks(n);
         }
 
-        var l = Math.ceil(Math.log(delta)/Math.log(10));
+        var factor, volume;
+        if (units == 'unixtime') {
+            factor = 1;
+            volume = 60;
+        }
+        else {
+            var l = Math.ceil(Math.log(delta)/Math.log(10));
+            factor = Math.pow(10, l - 2);
+            volume = 100;
+        }
 
-        delta /= Math.pow(10, l - 2);
-        var volume = 100;
+        delta /= factor;
 
         // Searching nearest factor of volume
         var rounded_delta = Math.round(delta),
@@ -88,7 +96,7 @@ Vis.blocks['i-scale-linear'] = {
             }
         }
 
-        delta = rounded_delta*Math.pow(10, l - 2);
+        delta = rounded_delta*factor;
 
         var result = [],
             xMin = Math.ceil(this.inputMin/delta)*delta,

@@ -9,6 +9,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.__base.init.apply(this, arguments);
 
         this.renderObjects();
+        this.initOverlays();
         this.initLayers();
         this.updateDimensions();
 
@@ -56,6 +57,17 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         }
     },
 
+    initOverlays: function() {
+        var _this = this,
+            overlays = _this.content.overlays;
+
+        for (var i = 0, l = overlays.length; i < l; ++i) {
+            if (typeof overlays[i].bind !== 'undefined') {
+                overlays[i].bind();
+            }
+        }
+    },
+
     initLayersForOverlay: function(overlayNo) {
         var _this = this,
             overlays = _this.content.overlays,
@@ -71,7 +83,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
                 tag: 'canvas',
                 cls: 'b-chart__canvas'
             }));
-            _this.$clippedViewport.append($canvas);
+            _this.content.$clippedViewport.append($canvas);
 
             layer.canvas = $canvas;
             layer.ctx = layer.canvas.get(0).getContext('2d');
@@ -243,8 +255,8 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.renderXAxes('top', $('.b-9__tc .b-layout', $object), 'prepend');
         this.renderXAxes('bottom', $('.b-9__bc .b-layout', $object), 'append');
 
-        this.$viewport = $('.b-chart__viewport', $object);
-        this.$clippedViewport = $('.b-chart__clipped-viewport', $object);
+        this.content.$viewport = $('.b-chart__viewport', $object);
+        this.content.$clippedViewport = $('.b-chart__clipped-viewport', $object);
     },
 
     updateDimensions: function() {
@@ -252,7 +264,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             dim = _this.dimensions;
 
         dim.height = 200;
-        dim.width = this.$viewport.width();
+        dim.width = this.content.$viewport.width();
 
         this._applySize();
     },
@@ -262,7 +274,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             dim = _this.dimensions,
             layers = _this.content.layers;
 
-        this.$viewport.css('height', dim.height + 'px');
+        this.content.$viewport.css('height', dim.height + 'px');
         for (var i = 0, l = layers.length; i < l; ++i) {
             var layer = layers[i];
             layer.canvas.attr('width', dim.width);

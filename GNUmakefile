@@ -2,7 +2,9 @@ MODULES=\
 	core \
 	uniq-id \
 	task-scheduler \
-	units
+	units \
+	binary-search \
+	color-to-rgba
 
 BLOCKS=\
 	b-axis \
@@ -18,6 +20,7 @@ BLOCKS=\
 	b-chart \
 	b-grid-overlay \
 	b-render-overlay \
+	b-tooltip-overlay \
 	b-line-render
 
 SOURCES=\

@@ -141,8 +141,21 @@ Vis.blocks['i-scale-linear'] = {
         return result;
     },
 
-    format: function(value) {
-        return Math.round(value*100)/100;
+    format: function(x) {
+        var absx = Math.abs(x);
+        var v;
+        if (absx < 1) {
+            var p = Math.floor(Math.log(absx)/Math.log(10));
+            var d = Math.pow(10, -p + 2);
+            if (d == Infinity) {
+                v = 0;
+            } else {
+                v = Math.round(x*d)/d;
+            }
+        } else {
+            v = Math.round(x*100)/100;
+        }
+        return String(v);
     }
 };
 

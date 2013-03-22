@@ -21,21 +21,31 @@ BLOCKS=\
 	b-grid-overlay \
 	b-render-overlay \
 	b-tooltip-overlay \
-	b-line-render
+	b-line-render \
+	b-9 \
+	b-box \
+	b-layout \
+	b-loading
 
-SOURCES=\
+SOURCES_JS=\
 	$(foreach module,$(MODULES),modules/$(module).js) \
 	$(wildcard $(foreach block,$(BLOCKS),blocks/$(block)/$(block).js))
 
-.PHONY: all
-all: vis.js
+SOURCES_CSS=\
+	$(wildcard $(foreach block,$(BLOCKS),blocks/$(block)/$(block).css))
 
-vis.js: $(SOURCES)
+.PHONY: all
+all: vis.js vis.css
+
+vis.js: $(SOURCES_JS)
+	cat $^ > $@
+
+vis.css: $(SOURCES_CSS)
 	cat $^ > $@
 
 .PHONY: inotify
 inotify:
-	@inotifywait -e close_write -m $(SOURCES) | \
+	@inotifywait -e close_write -m $(SOURCES_JS) $(SOURCES_CSS) | \
 	while read -r line; do \
 		$(MAKE); \
 	done

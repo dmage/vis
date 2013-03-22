@@ -14,6 +14,8 @@ Vis.blocks['i-chart'] = {
 
         params = params || {};
 
+        _this.title = params.title || "";
+
         var colorScheme = params.colorScheme || {};
         _this.colorScheme = Vis.create(
             colorScheme,

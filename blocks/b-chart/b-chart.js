@@ -189,7 +189,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         $object.html(Vis.render([
             {
                 cls: 'b-chart__header',
-                content: 'Header'
+                content: this.title
             },
             {
                 tag: 'table',

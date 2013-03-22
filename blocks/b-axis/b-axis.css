@@ -46,7 +46,8 @@
 .b-axis_pos_top .b-axis__tick,
 .b-axis_pos_bottom .b-axis__tick
 {
-    border-left: 1px solid #000;
+    border-color: inherit;
+    border-left: 1px solid;
     height: 5px;
 }
 .b-axis_pos_top .b-axis__tick { bottom: 0 }
@@ -84,7 +85,8 @@
 .b-axis_pos_left .b-axis__tick,
 .b-axis_pos_right .b-axis__tick
 {
-    border-top: 1px solid #000;
+    border-color: inherit;
+    border-top: 1px solid;
     width: 5px;
 }
 .b-axis_pos_left .b-axis__tick { right: 0 }

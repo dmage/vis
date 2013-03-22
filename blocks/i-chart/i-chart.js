@@ -328,7 +328,7 @@ Vis.blocks['i-chart'] = {
 
     renderYAxis: function(yAxisNo, ticks) { /* override me */ },
     _renderYAxis: function(yAxisNo) {
-        this._renderXYAxis('y', 'Y', yAxisNo, Math.floor(this.dimensions.height / 40), -1, this.dimensions.height);
+        this._renderXYAxis('y', 'Y', yAxisNo, Math.floor(this.dimensions.height / 40), -1, this.dimensions.height - 1);
     },
 
     initYAxes: function() { /* override me */ },

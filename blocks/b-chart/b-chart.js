@@ -1,8 +1,11 @@
-(function(Vis) {
+(function($, Vis) {
 
 Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
     init: function(params) {
+        var _this = this;
         params = params || {};
+
+        this.uniqId = Vis.uniqId();
 
         this.$object = params.$object;
 
@@ -13,18 +16,14 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.initLayers();
         this.updateDimensions();
 
-        var xAxes = this.content.xAxes,
-            yAxes = this.content.yAxes,
-            i, l;
-        for (i = 0, l = xAxes.length; i < l; ++i) {
-            this._renderXAxis(i);
-        }
-        for (i = 0, l = yAxes.length; i < l; ++i) {
-            this._renderYAxis(i);
-        }
-        // this._renderLayers();
-
-        this.render();
+        $(window).bind('resize', function() {
+            TaskScheduler.run(TaskScheduler.PRIO_SYSTEM, [function(sched) {
+                _this.updateDimensions();
+                sched.next();
+            }], {
+                id: _this.uniqId + ".resize"
+            });
+        });
     },
 
     updateXAxisRange: function(xAxisNo) {
@@ -267,6 +266,19 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         dim.width = this.content.$viewport.width();
 
         this._applySize();
+
+        var xAxes = this.content.xAxes,
+            yAxes = this.content.yAxes,
+            i, l;
+        for (i = 0, l = xAxes.length; i < l; ++i) {
+            this._renderXAxis(i);
+        }
+        for (i = 0, l = yAxes.length; i < l; ++i) {
+            this._renderYAxis(i);
+        }
+        // this._renderLayers();
+
+        this.render();
     },
 
     applySize: function() {
@@ -279,8 +291,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             var layer = layers[i];
             layer.canvas.attr('width', dim.width);
             layer.canvas.attr('height', dim.height);
+            layer.canvas.css('height', dim.height + 'px');
         }
     }
 });
 
-})(Vis);
+})(jQuery, Vis);

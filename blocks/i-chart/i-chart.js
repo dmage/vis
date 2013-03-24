@@ -170,7 +170,7 @@ Vis.blocks['i-chart'] = {
 
         item.trigger('data');
 
-        // override me
+        // FIXME
         this.render();
     },
 
@@ -287,6 +287,9 @@ Vis.blocks['i-chart'] = {
         }
 
         _this['render' + XY + 'Axis'](no, ticks);
+
+        // FIXME
+        this.render();
     },
 
     initXAxis: function(xAxisNo) { /* override me */ },

@@ -77,12 +77,21 @@ Vis.blocks['i-math-data-provider'] = {
              1.3*Math.sin(11*a*t) +
             -1.2*Math.sin(9*a*t) +
              1.1*Math.sin(2*a*t) +
+               5*Math.sin(1.73205*a*t) +
                  Math.sin(a*t) +
+               7*Math.sin(0.707106*a*t) +
                  Math.sin(0.6*a*t) +
               10*Math.sin(0.1*a*t) +
+              11*Math.sin(0.223606*a*t) +
+               7*Math.sin(0.173205*a*t) +
+               5*Math.sin(0.141421*a*t) +
               20*Math.sin(0.02*a*t) +
                5*Math.sin(0.03*a*t) +
-              20*Math.sin(0.025*a*t)
+              20*Math.sin(0.025*a*t) +
+              11*Math.sin(0.0158770*a*t) +
+              17*Math.sin(0.00294565*a*t) +
+              19*Math.sin(0.000977518*a*t) +
+              11*Math.sin(0.0000305185*a*t)
         }
     }
 };

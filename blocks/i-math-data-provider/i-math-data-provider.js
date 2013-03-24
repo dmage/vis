@@ -65,6 +65,25 @@ Vis.blocks['i-math-data-provider'] = {
             x: Math.sin(this.params.a * t),
             y: Math.sin(this.params.b * t)
         };
+    },
+
+    demo1: function(t) {
+        var a = 0.05;
+        return {
+            x: t,
+            y:
+             1.5*Math.sin(51*a*t) +
+            -1.4*Math.sin(21*a*t) +
+             1.3*Math.sin(11*a*t) +
+            -1.2*Math.sin(9*a*t) +
+             1.1*Math.sin(2*a*t) +
+                 Math.sin(a*t) +
+                 Math.sin(0.6*a*t) +
+              10*Math.sin(0.1*a*t) +
+              20*Math.sin(0.02*a*t) +
+               5*Math.sin(0.03*a*t) +
+              20*Math.sin(0.025*a*t)
+        }
     }
 };
 

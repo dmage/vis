@@ -15,6 +15,7 @@ BLOCKS=\
 	i-current-time-range-provider \
 	i-data-range-provider \
 	i-scale-linear \
+	i-static-data-provider \
 	i-math-data-provider \
 	i-hammy-data-provider \
 	b-chart \

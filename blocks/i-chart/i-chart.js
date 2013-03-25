@@ -95,10 +95,9 @@ Vis.blocks['i-chart'] = {
             yAxes = _this.content.yAxes,
             item = _this.content.items[itemNo];
 
-        if (typeof item.tAxisNo === 'undefined') {
-            item.tAxisNo = 0;
+        if (tAxes.length > 0) {
+            item.tAxis = tAxes[item.tAxisNo || 0] || Vis.error("No t-axis for item #" + itemNo);
         }
-        item.tAxis = tAxes[item.tAxisNo] || Vis.error("No t-axis for item #" + itemNo);
 
         if (typeof item.xAxisNo === 'undefined') {
             item.xAxisNo = 0;
@@ -118,7 +117,7 @@ Vis.blocks['i-chart'] = {
             item.units = "";
         }
 
-        if (typeof item.dataProvider.timeRangeProvider === 'undefined') {
+        if (typeof item.dataProvider.timeRangeProvider === 'undefined' && item.tAxis) {
             item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
         }
         item.dataProvider = Vis.create(
@@ -220,9 +219,11 @@ Vis.blocks['i-chart'] = {
         }
         axis.items = axisItems;
 
-        axis.tAxis = tAxes[axis.tAxisNo || 0] || Vis.error("No t-axis for " + xy + "-axis #" + no);
+        if (tAxes.length > 0) {
+            axis.tAxis = tAxes[axis.tAxisNo || 0] || Vis.error("No t-axis for " + xy + "-axis #" + no);
+        }
 
-        if (typeof axis.rangeProvider.timeRangeProvider === 'undefined') {
+        if (typeof axis.rangeProvider.timeRangeProvider === 'undefined' && axis.tAxis) {
             axis.rangeProvider.timeRangeProvider = axis.tAxis.rangeProvider;
         }
 

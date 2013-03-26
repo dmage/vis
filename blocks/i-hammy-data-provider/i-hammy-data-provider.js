@@ -6,7 +6,7 @@ Vis.blocks['i-hammy-data-provider'] = {
             timeRangeProvider = _this.timeRangeProvider = params.timeRangeProvider;
 
         _this.url = params.url;
-        _this.object = params.object;
+        _this.host = params.host;
         _this.key = params.key;
 
         timeRangeProvider.on('update.vis', function() {
@@ -27,7 +27,7 @@ Vis.blocks['i-hammy-data-provider'] = {
             tEnd = _this.range.max;
         $.ajax(_this.url, {
             data: {
-                object: _this.object,
+                host: _this.host,
                 key: _this.key,
                 from: tBegin,
                 to: tEnd

@@ -8,9 +8,8 @@ Vis.blocks['i-average-filter'] = {
 
     run: function(item, data) {
         var xSliceName = this.params.xSliceName || "x",
-            ySliceName = this.params.ySliceName || "y";
-
-        var step = 300;
+            ySliceName = this.params.ySliceName || "y",
+            step = this.params.step || 300;
 
         var xSlice = data[xSliceName] || [];
         var ySlice = data[ySliceName] || [];
@@ -32,10 +31,10 @@ Vis.blocks['i-average-filter'] = {
             if (sx != px) {
                 xResult.push(px + step/2);
                 yResult.push(py/n);
-                px = sx;
                 py = 0;
                 n = 0;
             }
+            px = sx;
             py += y;
             n += 1;
         }

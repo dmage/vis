@@ -18,6 +18,8 @@ BLOCKS=\
 	i-static-data-provider \
 	i-math-data-provider \
 	i-hammy-data-provider \
+	i-average-filter \
+	i-average-processor \
 	b-chart \
 	b-grid-overlay \
 	b-render-overlay \

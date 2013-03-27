@@ -7,7 +7,6 @@ Vis.blocks['i-data-range-provider'] = {
         this.xy = params.xy;
         this.items = params.items;
 
-        console.log(this);
         for (var i = 0, l = this.items.length; i < l; ++i) {
             this.items[i].on('renderData', function() {
                 _this.calculate();

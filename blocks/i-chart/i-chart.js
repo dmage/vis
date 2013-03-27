@@ -421,15 +421,24 @@ Vis.blocks['i-chart'] = {
 
     _runProcessors: function() {
         var _this = this,
+            xAxes = _this.content.xAxes,
             yAxes = _this.content.yAxes,
             items = _this.content.items;
 
+        for (var xAxisNo = 0, l = xAxes.length; xAxisNo < l; ++xAxisNo) {
+            var xAxis = xAxes[xAxisNo];
+
+            for (var i = 0; i < xAxis.items.length; ++i) {
+                xAxis.items[i].renderData = xAxis.items[i].data;
+            }
+
+            for (var j = 0, m = xAxis.processors.length; j < m; ++j) {
+                xAxis.processors[j].run(xAxis.items);
+            }
+        }
+
         for (var yAxisNo = 0, l = yAxes.length; yAxisNo < l; ++yAxisNo) {
             var yAxis = yAxes[yAxisNo];
-
-            for (var i = 0; i < yAxis.items.length; ++i) {
-                yAxis.items[i].renderData = yAxis.items[i].data;
-            }
 
             for (var j = 0, m = yAxis.processors.length; j < m; ++j) {
                 yAxis.processors[j].run(yAxis.items);

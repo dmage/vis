@@ -11,13 +11,7 @@ Vis.blocks['b-tooltip-overlay'] = {
         var _this = this,
             viewport = _this.params.content.$viewport;
 
-        var $tooltip = $('<div>');
-        $tooltip.css('position', 'absolute');
-        $tooltip.css('min-width', '60px');
-        $tooltip.css('background', 'white');
-        $tooltip.css('padding', '0.3em 0.5em 0.1em');
-        $tooltip.css('border', '1px solid #000');
-        $tooltip.css('border-radius', '3px');
+        var $tooltip = $('<div class="b-tooltip">');
         $tooltip.hide();
 
         var $dot = $('<div>');
@@ -130,7 +124,7 @@ Vis.blocks['b-tooltip-overlay'] = {
 
             var result = $.colorToRgba(item.color),
                 mixin = $.colorToRgba("#fff"),
-                lvl = 0.5;
+                lvl = 0.9;
             result = {
                 r: Math.floor((1 - lvl) * result.r + lvl * mixin.r),
                 g: Math.floor((1 - lvl) * result.g + lvl * mixin.g),
@@ -138,9 +132,20 @@ Vis.blocks['b-tooltip-overlay'] = {
             };
             var color = 'rgba(' + result.r + ',' + result.g + ',' + result.b + ',0.8)';
 
+            result = $.colorToRgba(item.color);
+            mixin = $.colorToRgba("#000");
+            lvl = 0.2;
+            result = {
+                r: Math.floor((1 - lvl) * result.r + lvl * mixin.r),
+                g: Math.floor((1 - lvl) * result.g + lvl * mixin.g),
+                b: Math.floor((1 - lvl) * result.b + lvl * mixin.b)
+            };
+            var borderColor = 'rgba(' + result.r + ',' + result.g + ',' + result.b + ',0.8)';
+
             px = x.f(xVal);
             py = y.f(yVal + shiftVal);
             $tooltip.css('background-color', color);
+            $tooltip.css('border-color', borderColor);
             if (px < 0.75*width) {
                 $tooltip.css('left', px + 'px');
                 $tooltip.css('right', 'auto');

@@ -124,9 +124,11 @@ Vis.blocks['i-chart'] = {
             item.dataProvider,
             item.dataProvider.name || 'undefined-item-data-provider'
         );
-        item.dataProvider.on('update', function(e) {
-            _this._updateItemData(itemNo);
-        });
+        if (typeof item.dataProvider.on !== 'undefined') {
+            item.dataProvider.on('update', function(e) {
+                _this._updateItemData(itemNo);
+            });
+        }
 
         if (!item.filters) {
             item.filters = [];

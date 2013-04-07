@@ -25,6 +25,7 @@ BLOCKS=\
 	b-render-overlay \
 	b-tooltip-overlay \
 	b-line-render \
+	b-cubic-spline-render \
 	b-9 \
 	b-box \
 	b-layout \

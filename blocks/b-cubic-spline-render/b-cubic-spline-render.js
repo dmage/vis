@@ -29,7 +29,7 @@ function Solve(A, b, w, maxIters) {
         var r = ApplyMatrix(A, x);
         var done = 1;
         for (i = 0; i < n; ++i) {
-            if (Math.abs(r[i] - b[i]) > 0.01) {
+            if (Math.abs(r[i] - b[i]) > 0.0001) {
                 done = 0;
                 break;
             }
@@ -44,13 +44,17 @@ function Solve(A, b, w, maxIters) {
             for (j = 0; j < n; ++j) {
                 if (j != i) {
                     s += A[i*n + j]*x[j];
+                    if (s != s) { Vis.error('NaN at ' + k + ' iteration (A[' + i + ',' + j + '])'); }
                 }
             }
+            if (s != s) { Vis.error('NaN at ' + k + ' iteration (s)'); }
             x[i] = (1 - w)*x[i] + w*(b[i] - s)/A[i*n + i];
+            if (x[i] != x[i]) { Vis.error('NaN at ' + k + ' iteration (x[i])'); }
         }
     }
 
     console.log('Solve', 'no solution after ' + maxIters + ' iterations');
+    Vis.error('no solution after ' + maxIters + ' iterations');
     return (void 0);
 }
 
@@ -58,12 +62,22 @@ function Spline(X, Y) {
     var n = X.length,
         i;
 
+    var Xd = [], Yd = [], xprev = null;
+    for (i = 0; i < n; ++i) {
+        var x = X[i], y = Y[i];
+        if (x != xprev) { Xd.push(x); Yd.push(y); }
+        xprev = x;
+    }
+    X = Xd; Y = Yd;
+    n = X.length;
+
     var A = Array(n*n);
     var b = Array(n);
     for (i = 0; i < n*n; ++i) {
         A[i] = 0;
     }
 
+    console.log(X[1], X[0]);
     A[0] = 2.0/(X[1] - X[0]);
     A[1] = 1.0/(X[1] - X[0]);
     A[n] = A[1];
@@ -79,9 +93,11 @@ function Spline(X, Y) {
     b[n - 1] = 3.0*(Y[n - 1] - Y[n - 2])/((X[n - 1] - X[n - 2])*(X[n - 1] - X[n - 2]));
 
     var k = Solve(A, b);
+    //console.log('k', k);
     var result = Array(n - 1);
     for (i = 0; i < n - 1; ++i) {
-        var x1 = X[i], x2 = X[i + 1],
+        var xs = X[i],
+            x1 = 0, x2 = X[i + 1] - xs,
             y1 = Y[i], y2 = Y[i + 1],
             p1 = k[i], p2 = k[i + 1];
         var p_sum = (p1 + p2);
@@ -99,6 +115,7 @@ function Spline(X, Y) {
         var h = -(b*x0 + c)/(3*a);
         var y0 = a*x0*x0*x0 + b*x0*x0 + c*x0 + d;
         result[i] = {
+            xs: xs,
             x1: x1, x2: x2,
             y1: y1, y2: y2,
             p1: p1, p2: p2,
@@ -165,20 +182,24 @@ Vis.blocks['b-cubic-spline-render'] = {
         ctx.strokeStyle = '#c00';
         ctx.lineWidth = 1;
 
+        if (xData.length == 0) {
+            return;
+        }
         var ss = Spline(xData, yData);
-        console.log(s);
+        //console.log(ss);
         for (i = 0; i < ss.length; ++i) {
             var s = ss[i];
             if (i == 0) {
-                ctx.moveTo(xf(s.x1), height - yf(s.y1));
+                ctx.moveTo(xf(s.x1 + s.xs), height - yf(s.y1));
+                ctx.beginPath();
             }
-            console.log(s.y1, s.a*(s.x1 - s.x0)*(s.x1 - s.x0)*(s.x2 - s.x0) - s.a*s.h*(2*(s.x1 - s.x0) + (s.x2 - s.x0)), s.y0);
+            //console.log(s.y1, s.a*(s.x1 - s.x0)*(s.x1 - s.x0)*(s.x2 - s.x0) - s.a*s.h*(2*(s.x1 - s.x0) + (s.x2 - s.x0)), s.y0);
             ctx.bezierCurveTo(
-                xf((2*s.x1 + s.x2)/3.0),
+                xf((2*s.x1 + s.x2)/3.0 + s.xs),
                 height - yf(s.a*(s.x1 - s.x0)*(s.x1 - s.x0)*(s.x2 - s.x0) - s.a*s.h*(2*(s.x1 - s.x0) + (s.x2 - s.x0)) + s.y0),
-                xf((s.x1 + 2*s.x2)/3.0),
+                xf((s.x1 + 2*s.x2)/3.0 + s.xs),
                 height - yf(s.a*(s.x1 - s.x0)*(s.x2 - s.x0)*(s.x2 - s.x0) - s.a*s.h*((s.x1 - s.x0) + 2*(s.x2 - s.x0)) + s.y0),
-                xf(s.x2),
+                xf(s.x2 + s.xs),
                 height - yf(s.y2)
             );
         }

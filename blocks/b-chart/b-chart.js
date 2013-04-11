@@ -6,6 +6,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         params = params || {};
 
         this.uniqId = Vis.uniqId();
+        this.debug = 1;
 
         this.$object = params.$object;
 
@@ -18,7 +19,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         $(window).bind('resize', function() {
             TaskScheduler.run(TaskScheduler.PRIO_SYSTEM, [function(sched) {
+                var b = _this.debug && Vis.benchmark();
                 _this.updateDimensions();
+                Vis.benchmark(b, 'resize');
                 sched.next();
             }], {
                 id: _this.uniqId + ".resize"
@@ -92,7 +95,23 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         }
 
         _this.renderTasks.push(function(sched) {
-            overlay.draw(sched, localLayers);
+            var b = _this.debug && Vis.benchmark();
+            var wrappedSched = {
+                next: function(f) {
+                    if (f) {
+                        _this.debug && Vis.subbenchmark(b);
+                        sched.next(function() {
+                            var args = Array.prototype.slice.call(arguments, 1);
+                            args.unshift(wrappedSched);
+                            f.apply(this, args);
+                        });
+                    } else {
+                        _this.debug && Vis.benchmark(b, 'renderTasks (overlay #' + overlayNo + ')');
+                        sched.next();
+                    }
+                }
+            };
+            overlay.draw(wrappedSched, localLayers);
         });
     },
 
@@ -102,14 +121,18 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         _this.renderTasks = [];
         _this.renderTasks.push(function(sched) {
+            var b = _this.debug && Vis.benchmark();
             _this._beforeRender();
+            _this.debug && Vis.benchmark(b, '_beforeRender');
             sched.next();
         });
         for (var i = 0, l = overlays.length; i < l; ++i) {
             _this.initLayersForOverlay(i);
         }
         _this.renderTasks.push(function(sched) {
+            var b = _this.debug && Vis.benchmark();
             _this._afterRender();
+            _this.debug && Vis.benchmark(b, '_afterRender');
             sched.next();
         });
     },

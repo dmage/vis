@@ -4,7 +4,8 @@ MODULES=\
 	task-scheduler \
 	units \
 	binary-search \
-	color-to-rgba
+	color-to-rgba \
+	benchmark
 
 BLOCKS=\
 	b-axis \

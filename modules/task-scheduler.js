@@ -56,9 +56,9 @@ TaskScheduler.run = function(prio, subtasks, context, feature) {
             if (typeof feature !== 'undefined') {
                 context.mask[feature] = true;
             }
-            if (this._isMaskReady(context.mask)) {
-                context.startTime = new Date(0);
-            }
+        }
+        if (context.mask && this._isMaskReady(context.mask)) {
+            context.startTime = new Date(0);
         }
     }
     if (context.id && this.byId[context.id]) {

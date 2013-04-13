@@ -10,6 +10,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.debug = 0;
 
         this.$object = params.$object;
+        this.skipRender = 0;
 
         this.__base.init.apply(this, arguments);
 
@@ -43,6 +44,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         /* adjust canvas position */
 
+        if (_this.skipRender) {
+            return;
+        }
         for (var i = 0, l = items.length; i < l; ++i) {
             if (items[i].xAxisNo == xAxisNo) {
                 _this.renderItem(i);
@@ -63,6 +67,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         /* adjust canvas position */
 
+        if (_this.skipRender) {
+            return;
+        }
         for (var i = 0, l = items.length; i < l; ++i) {
             if (items[i].yAxisNo == yAxisNo) {
                 _this.renderItem(i);
@@ -213,7 +220,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             items = _this.content.items,
             mask = new Array(items.length);
         for (var i = 0, l = items.length; i < l; ++i) {
-            mask[i] = (items[i].ready == items[i].dataProvider.ready);
+            mask[i] = (items[i].ready === items[i].dataProvider.ready);
         }
         return mask;
     },
@@ -330,12 +337,16 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         var xAxes = this.content.xAxes,
             yAxes = this.content.yAxes,
             i, l;
+
+        this.skipRender = 1;
         for (i = 0, l = xAxes.length; i < l; ++i) {
             this._renderXAxis(i);
         }
         for (i = 0, l = yAxes.length; i < l; ++i) {
             this._renderYAxis(i);
         }
+        this.skipRender = 0;
+        this.render();
     },
 
     applySize: function() {
@@ -346,6 +357,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         this.content.$viewport.css('height', dim.height + 'px');
         for (var i = 0, l = layers.length; i < l; ++i) {
             var layer = layers[i];
+            // FIXME: change canvas size only when we ready to render new data
             layer.canvas.attr('width', dim.width);
             layer.canvas.attr('height', dim.height);
             layer.canvas.css('height', dim.height + 'px');

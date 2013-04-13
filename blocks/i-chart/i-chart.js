@@ -117,19 +117,6 @@ Vis.blocks['i-chart'] = {
             item.units = "";
         }
 
-        if (typeof item.dataProvider.timeRangeProvider === 'undefined' && item.tAxis) {
-            item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
-        }
-        item.dataProvider = Vis.create(
-            item.dataProvider,
-            item.dataProvider.name || 'undefined-item-data-provider'
-        );
-        if (typeof item.dataProvider.on !== 'undefined') {
-            item.dataProvider.on('update', function(e) {
-                _this._updateItemData(itemNo);
-            });
-        }
-
         if (!item.filters) {
             item.filters = [];
         }
@@ -149,8 +136,23 @@ Vis.blocks['i-chart'] = {
 
         item.renderData = {};
 
+        if (typeof item.dataProvider.timeRangeProvider === 'undefined' && item.tAxis) {
+            item.dataProvider.timeRangeProvider = item.tAxis.rangeProvider;
+        }
+        item.dataProvider = Vis.create(
+            item.dataProvider,
+            item.dataProvider.name || 'undefined-item-data-provider'
+        );
+        if (typeof item.dataProvider.on !== 'undefined') {
+            item.dataProvider.on('update', function(e) {
+                // if it was initiated by timeRangeProvider, then we
+                // shouldn't have updated 'ready' field while updating axis
+                setTimeout(function() {
+                    _this._updateItemData(itemNo);
+                }, 0);
+            });
+        }
         _this._updateItemData(itemNo);
-        // _requestItemData?
     },
 
     _updateItemData: function(itemNo) {
@@ -171,8 +173,8 @@ Vis.blocks['i-chart'] = {
 
         item.trigger('data');
 
-        // FIXME
-        this.render();
+        item.ready = item.dataProvider.ready;
+        _this.renderItem(itemNo);
     },
 
     _initItems: function() {
@@ -290,9 +292,6 @@ Vis.blocks['i-chart'] = {
         }
 
         _this['render' + XY + 'Axis'](no, ticks);
-
-        // FIXME
-        this.render();
     },
 
     initXAxis: function(xAxisNo) { /* override me */ },
@@ -404,23 +403,6 @@ Vis.blocks['i-chart'] = {
         _this.applySize();
     },
 
-    _updateItem: function(itemNo) {
-        var _this = this,
-            item = _this.content.items[itemNo];
-
-        _this._updateItemData(item);
-        item.ready = true;
-        _this.renderItem(itemNo);
-    },
-
-    _requestItemData: function(item) {
-        var _this = this,
-            xAxis = _this.content.xAxes[item.xAxis || 0] || _this.content.xAxes[0];
-
-        item.ready = false;
-        item.dataProvider.range(xAxis.scale.inputMin, xAxis.scale.inputMax);
-    },
-
     _runProcessors: function() {
         var _this = this,
             xAxes = _this.content.xAxes,
@@ -457,14 +439,6 @@ Vis.blocks['i-chart'] = {
     },
 
     _afterRender: function() {
-    },
-
-    renderItem: function(itemNo) {
-        if (this._init != -1) {
-            return;
-        }
-
-        this.render();
     }
 };
 

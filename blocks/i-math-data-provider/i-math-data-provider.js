@@ -6,9 +6,11 @@ Vis.blocks['i-math-data-provider'] = {
             timeRangeProvider = _this.timeRangeProvider = params.timeRangeProvider;
 
         _this.params = params;
+        _this.ready = 0;
 
         timeRangeProvider.on('update.vis', function() {
             _this.range = timeRangeProvider.get();
+            _this.ready += 1;
             $(_this).trigger('update.vis');
         });
         _this.range = timeRangeProvider.get();

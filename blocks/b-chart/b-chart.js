@@ -6,7 +6,8 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         params = params || {};
 
         this.uniqId = Vis.uniqId();
-        this.debug = 1;
+        this.delay = 200;
+        this.debug = 0;
 
         this.$object = params.$object;
 
@@ -29,22 +30,23 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         });
     },
 
-    updateXAxisRange: function(xAxisNo) {
-        var _this = this,
-            xAxes = _this.content.xAxes,
-            xAxis = xAxes[xAxisNo];
-
-        /* adjust canvas position */
-    },
-
     renderXAxis: function(xAxisNo, ticks) {
         var _this = this,
             content = _this.content,
             xAxes = content.xAxes,
+            items = content.items,
             xAxis = xAxes[xAxisNo];
 
         if (xAxis.visObject) {
             xAxis.visObject.update(xAxis.pos, ticks);
+        }
+
+        /* adjust canvas position */
+
+        for (var i = 0, l = items.length; i < l; ++i) {
+            if (items[i].xAxisNo == xAxisNo) {
+                _this.renderItem(i);
+            }
         }
     },
 
@@ -52,10 +54,19 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         var _this = this,
             content = _this.content,
             yAxes = content.yAxes,
+            items = content.items,
             yAxis = yAxes[yAxisNo];
 
         if (yAxis.visObject) {
             yAxis.visObject.update(yAxis.pos, ticks);
+        }
+
+        /* adjust canvas position */
+
+        for (var i = 0, l = items.length; i < l; ++i) {
+            if (items[i].yAxisNo == yAxisNo) {
+                _this.renderItem(i);
+            }
         }
     },
 
@@ -197,12 +208,38 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         layout.empty().append($tr);
     },
 
+    readyMask : function() {
+        var _this = this,
+            items = _this.content.items,
+            mask = new Array(items.length);
+        for (var i = 0, l = items.length; i < l; ++i) {
+            mask[i] = (items[i].ready == items[i].dataProvider.ready);
+        }
+        return mask;
+    },
+
     render: function() {
         if (!this.renderTasks) {
             return;
         }
 
-        TaskScheduler.run(TaskScheduler.PRIO_DATA, this.renderTasks);
+        TaskScheduler.run(TaskScheduler.PRIO_DATA, this.renderTasks, {
+            id: this.uniqId + ".draw",
+            delay: this.delay,
+            mask: this.readyMask()
+        });
+    },
+
+    renderItem: function(itemNo) {
+        if (!this.renderTasks) {
+            return;
+        }
+
+        TaskScheduler.update(TaskScheduler.PRIO_DATA, this.renderTasks, {
+            id: this.uniqId + ".draw",
+            delay: this.delay,
+            mask: this.readyMask()
+        }, itemNo);
     },
 
     renderObjects: function() {
@@ -299,9 +336,6 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         for (i = 0, l = yAxes.length; i < l; ++i) {
             this._renderYAxis(i);
         }
-        // this._renderLayers();
-
-        this.render();
     },
 
     applySize: function() {

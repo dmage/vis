@@ -9,13 +9,18 @@ Vis.blocks['i-hammy-data-provider'] = {
         _this.host = params.host;
         _this.key = params.key;
         _this.quantile = params.quantile;
+        _this.ready = 0;
 
         timeRangeProvider.on('update.vis', function() {
             _this.range = timeRangeProvider.get();
+            _this.ready += 1;
             _this.fetchData();
         });
+        setTimeout(function() {
+            _this.ready += 1;
+            _this.fetchData();
+        }, 0);
         _this.range = timeRangeProvider.get();
-        _this.fetchData();
     },
 
     on: function(action, callback) {

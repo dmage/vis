@@ -29,12 +29,6 @@ Vis.blocks['b-line-render'] = {
 
         //console.time('render ' + itemNo);
 
-        if (canvas) {
-            ctx.clearRect(0, 0, dim.width, dim.height);
-            canvas.css('left', '0');
-            canvas.css('width', '100%');
-        }
-
         var color = item.color || "rgb(0,0,0)";
         if (typeof colorMixin !== 'undefined') {
             var colorRgba = $.colorToRgba(color),

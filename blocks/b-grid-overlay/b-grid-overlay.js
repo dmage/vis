@@ -6,7 +6,10 @@ Vis.blocks['b-grid-overlay'] = {
     },
 
     layersRequest: function() {
-        return [{}];
+        return [{
+            xAxisNo: 0,
+            yAxisNo: 0
+        }];
     },
 
     draw: function(sched, layers) {
@@ -21,16 +24,23 @@ Vis.blocks['b-grid-overlay'] = {
             f, ticks;
 
         if (canvas) {
+            ctx.clearRect(0, 0, dim.width, dim.height);
             canvas.css('left', '0');
+            canvas.css('top', '0');
             canvas.css('width', '100%');
+            canvas.css('height', dim.height + 'px');
         }
-        ctx.clearRect(0, 0, dim.width, dim.height);
 
         if (typeof ctx.mozDash !== 'undefined') {
             ctx.mozDash = [2, 4];
         }
 
         if (xAxis) {
+            layers[0].xAxisRange = {
+                min: xAxis.scale.inputMin,
+                max: xAxis.scale.inputMax
+            };
+
             f = xAxis.scale.f;
             ticks = xAxis.ticks;
             ctx.strokeStyle = "rgb(235,235,235)";
@@ -45,6 +55,11 @@ Vis.blocks['b-grid-overlay'] = {
         }
 
         if (yAxis) {
+            layers[0].yAxisRange = {
+                min: yAxis.scale.inputMin,
+                max: yAxis.scale.inputMax
+            };
+
             f = yAxis.scale.f;
             ticks = yAxis.ticks;
             ctx.strokeStyle = "rgb(220,220,220)";

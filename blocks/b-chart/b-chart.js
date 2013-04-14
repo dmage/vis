@@ -37,18 +37,34 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             content = _this.content,
             xAxes = content.xAxes,
             items = content.items,
-            xAxis = xAxes[xAxisNo];
+            layers = content.layers,
+            xAxis = xAxes[xAxisNo],
+            i, l;
 
         if (xAxis.visObject) {
             xAxis.visObject.update(xAxis.pos, ticks);
         }
 
-        /* adjust canvas position */
+        var scaleMin = xAxis.scale.inputMin,
+            scaleMax = xAxis.scale.inputMax;
+        for (i = 0, l = layers.length; i < l; ++i) {
+            var layer = layers[i];
+            if (layer.xAxisNo != xAxisNo || !layer.xAxisRange) {
+                continue;
+            }
+
+            var layerMin = layer.xAxisRange.min,
+                layerMax = layer.xAxisRange.max;
+            var width = 100*(layerMax - layerMin)/(scaleMax - scaleMin),
+                left = 100*(layerMin - scaleMin)/(scaleMax - scaleMin);
+            layer.canvas.css('width', width + '%');
+            layer.canvas.css('left', left + '%');
+        }
 
         if (_this.skipRender) {
             return;
         }
-        for (var i = 0, l = items.length; i < l; ++i) {
+        for (i = 0, l = items.length; i < l; ++i) {
             if (items[i].xAxisNo == xAxisNo) {
                 _this.renderItem(i, false);
             }
@@ -60,18 +76,34 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             content = _this.content,
             yAxes = content.yAxes,
             items = content.items,
-            yAxis = yAxes[yAxisNo];
+            layers = content.layers,
+            yAxis = yAxes[yAxisNo],
+            i, l;
 
         if (yAxis.visObject) {
             yAxis.visObject.update(yAxis.pos, ticks);
         }
 
-        /* adjust canvas position */
+        var scaleMin = yAxis.scale.inputMin,
+            scaleMax = yAxis.scale.inputMax;
+        for (i = 0, l = layers.length; i < l; ++i) {
+            var layer = layers[i];
+            if (layer.yAxisNo != yAxisNo || !layer.yAxisRange) {
+                continue;
+            }
+
+            var layerMin = layer.yAxisRange.min,
+                layerMax = layer.yAxisRange.max;
+            var height = _this.dimensions.height*(layerMax - layerMin)/(scaleMax - scaleMin),
+                top = 100*(layerMin - scaleMin)/(scaleMax - scaleMin);
+            layer.canvas.css('height', height + 'px');
+            layer.canvas.css('top', top + '%');
+        }
 
         if (_this.skipRender) {
             return;
         }
-        for (var i = 0, l = items.length; i < l; ++i) {
+        for (i = 0, l = items.length; i < l; ++i) {
             if (items[i].yAxisNo == yAxisNo) {
                 _this.renderItem(i, false);
             }

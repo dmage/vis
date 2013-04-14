@@ -55,10 +55,10 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
             var layerMin = layer.xAxisRange.min,
                 layerMax = layer.xAxisRange.max;
-            var width = 100*(layerMax - layerMin)/(scaleMax - scaleMin),
-                left = 100*(layerMin - scaleMin)/(scaleMax - scaleMin);
-            layer.canvas.css('width', width + '%');
-            layer.canvas.css('left', left + '%');
+            var width = _this.dimensions.width*(layerMax - layerMin)/(scaleMax - scaleMin),
+                left = _this.dimensions.width*(layerMin - scaleMin)/(scaleMax - scaleMin);
+            layer.canvas.css('width', Math.round(width) + 'px');
+            layer.canvas.css('left', (left|0) + 'px');
         }
 
         if (_this.skipRender) {
@@ -95,9 +95,9 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             var layerMin = layer.yAxisRange.min,
                 layerMax = layer.yAxisRange.max;
             var height = _this.dimensions.height*(layerMax - layerMin)/(scaleMax - scaleMin),
-                top = 100*(layerMin - scaleMin)/(scaleMax - scaleMin);
-            layer.canvas.css('height', height + 'px');
-            layer.canvas.css('top', top + '%');
+                top = _this.dimensions.height*(layerMin - scaleMin)/(scaleMax - scaleMin);
+            layer.canvas.css('height', Math.round(height) + 'px');
+            layer.canvas.css('top', (top|0) + '%');
         }
 
         if (_this.skipRender) {

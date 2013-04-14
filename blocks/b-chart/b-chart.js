@@ -7,6 +7,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
 
         this.uniqId = Vis.uniqId();
         this.delay = 200;
+        this.longDelay = 2000;
         this.debug = 0;
 
         this.$object = params.$object;
@@ -49,7 +50,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         }
         for (var i = 0, l = items.length; i < l; ++i) {
             if (items[i].xAxisNo == xAxisNo) {
-                _this.renderItem(i);
+                _this.renderItem(i, false);
             }
         }
     },
@@ -72,7 +73,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         }
         for (var i = 0, l = items.length; i < l; ++i) {
             if (items[i].yAxisNo == yAxisNo) {
-                _this.renderItem(i);
+                _this.renderItem(i, false);
             }
         }
     },
@@ -237,14 +238,14 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
         });
     },
 
-    renderItem: function(itemNo) {
+    renderItem: function(itemNo, newData) {
         if (!this.renderTasks) {
             return;
         }
 
         TaskScheduler.update(TaskScheduler.PRIO_DATA, this.renderTasks, {
             id: this.uniqId + ".draw",
-            delay: this.delay,
+            delay: newData ? this.delay : this.longDelay,
             mask: this.readyMask()
         }, itemNo);
     },

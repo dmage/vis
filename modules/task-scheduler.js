@@ -47,18 +47,13 @@ TaskScheduler._isMaskReady = function(mask) {
     return true;
 };
 
-TaskScheduler.run = function(prio, subtasks, context, feature) {
+TaskScheduler.run = function(prio, subtasks, context) {
     context = context || {};
     if (context.delay) {
-        context.startTime = new Date(+new Date() + context.delay);
-        if (context.features) {
-            context.mask = new Array(context.features);
-            if (typeof feature !== 'undefined') {
-                context.mask[feature] = true;
-            }
-        }
         if (context.mask && this._isMaskReady(context.mask)) {
             context.startTime = new Date(0);
+        } else {
+            context.startTime = new Date(+new Date() + context.delay);
         }
     }
     if (context.id && this.byId[context.id]) {
@@ -98,32 +93,33 @@ TaskScheduler.run = function(prio, subtasks, context, feature) {
     }
 };
 
-TaskScheduler.update = function(prio, subtasks, context, feature) {
+TaskScheduler.update = function(prio, subtasks, context) {
     context = context || {};
-    if (context.delay) {
-        context.startTime = new Date(+new Date() + context.delay);
-    }
     if (context.id && this.byId[context.id]) {
         var task = this.byId[context.id];
-        var mask = task.context.mask;
+        var delay = task.context.delay;
         var resetTimer = false;
 
-        task.context = context;
-        if (mask && typeof feature !== 'undefined') {
-            mask[feature] = true;
-            if (this._isMaskReady(context.mask)) {
-                task.context.startTime = new Date(0);
-                resetTimer = true;
-            }
+        if (delay && (!context.delay || context.delay > delay)) {
+            context.delay = delay;
         }
 
-        task.context.mask = mask;
+        if (context.delay) {
+            if (context.mask && this._isMaskReady(context.mask)) {
+                context.startTime = new Date(0);
+            } else {
+                context.startTime = new Date(+new Date() + context.delay);
+            }
+            resetTimer = true;
+        }
+
+        task.context = context;
 
         if (resetTimer && this.currentTask === null) {
             this.waitForNextTask();
         }
     } else {
-        this.run(prio, subtasks, context, feature);
+        this.run(prio, subtasks, context);
     }
 };
 

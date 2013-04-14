@@ -174,7 +174,7 @@ Vis.blocks['i-chart'] = {
         item.trigger('data');
 
         item.ready = item.dataProvider.ready;
-        _this.renderItem(itemNo);
+        _this.renderItem(itemNo, true);
     },
 
     _initItems: function() {

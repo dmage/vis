@@ -24,7 +24,7 @@ Vis.blocks['b-chart'] = Vis.extend(Vis.blocks['i-chart'], {
             TaskScheduler.run(TaskScheduler.PRIO_SYSTEM, [function(sched) {
                 var b = _this.debug && Vis.benchmark();
                 _this.updateDimensions();
-                Vis.benchmark(b, 'resize');
+                _this.debug && Vis.benchmark(b, 'resize');
                 sched.next();
             }], {
                 id: _this.uniqId + ".resize"

@@ -48,6 +48,10 @@ vis.js: $(SOURCES_JS)
 vis.css: $(SOURCES_CSS)
 	cat $^ > $@
 
+.PHONY: doc
+doc: vis.js vis.css
+	cd $@ && $(MAKE)
+
 .PHONY: inotify
 inotify:
 	@inotifywait -e close_write -m $(SOURCES_JS) $(SOURCES_CSS) | \

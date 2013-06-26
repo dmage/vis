@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>custom_overlay - Vis.js</title>
+<link rel="stylesheet" type="text/css" href="../vis.css">
+<script src="http://yandex.st/jquery/1.9.1/jquery.min.js"></script>
+<script src="../vis.js"></script>
+<script>
+Vis.blocks['my-scale'] = {
+    update: function() {
+        var inputMin = this.inputMin;
+        var outputMin = this.outputMin;
+        var inputMax = this.inputMax;
+        var outputMax = this.outputMax;
+
+        var sgn = function(x) {
+            return x < 0 ? -1 : 1;
+        };
+        var sf = function(x) {
+            return sgn(x)*Math.pow(Math.abs(x), 1/3);
+        }
+
+        this.f = function f(x) {
+            x = sf(x);
+            x = x - sf(inputMin);
+            x = x/(sf(inputMax) - sf(inputMin));
+            x = outputMin + x*(outputMax - outputMin);
+            return x;
+        };
+
+        // TODO: implement this.fInv
+        // required by tooltip overlay on xAxis
+    },
+
+    input: function(min, max) {
+        this.inputMin = min;
+        this.inputMax = max;
+        this.update();
+    },
+
+    output: function(min, max) {
+        this.outputMin = min;
+        this.outputMax = max;
+        this.update();
+    },
+
+    f: function(x) {
+        return undefined;
+    },
+
+    fInv: function(x) {
+        return undefined;
+    },
+
+    ticks: function(n, units) {
+        var range = (this.inputMax - this.inputMin);
+        var delta = range/n;
+
+        // TODO: implement more sophisticated algorithm
+        var result = [],
+            xMin = Math.ceil(this.inputMin/delta)*delta,
+            xMax = Math.floor(this.inputMax/delta)*delta,
+            x = xMin,
+            steps = Math.round((xMax - xMin)/delta) + 1;
+        for (i = 0; i < steps; ++i) {
+            result.push(x);
+            x += delta;
+        }
+
+        return result;
+    },
+
+    format: function(x) {
+        // TODO: replace by something not connected to linear scale
+        return Vis.blocks['i-scale-linear'].format(x);
+    }
+}
+
+$(function() {
+    Vis(
+        {
+            $object: $('.b-chart'),
+            tAxes: [
+                {
+                    rangeProvider: {
+                        name: 'i-current-time-range-provider',
+                        period: 3600,
+                        delay: 1000
+                    },
+                }
+            ],
+            xAxes: [
+                {
+                    rangeProvider: { name: 'i-time-range-provider', min: -1, max: 1 },
+                    units: "unixtime"
+                }
+            ],
+            yAxes: [
+                {
+                    rangeProvider: { name: 'i-data-range-provider', min: -1, max: 1 },
+                    scale: { name: 'my-scale' }
+                }
+            ],
+            items: [
+                {
+                    dataProvider: {
+                        name: 'i-math-data-provider',
+                        step: 10,
+                        func: 'demo1'
+                    }
+                }
+            ],
+            overlays: [
+                { name: 'b-grid-overlay' },
+                { name: 'b-render-overlay' },
+                { name: 'b-tooltip-overlay' }
+            ]
+        },
+        'b-chart'
+    );
+});
+</script>
+</head>
+
+<body>
+<h1>Vis.js</h1>
+<div class="b-chart"></div>
+</body>
+
+</html>

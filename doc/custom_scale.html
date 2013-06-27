@@ -20,18 +20,28 @@ Vis.blocks['my-scale'] = {
         };
         var sf = function(x) {
             return sgn(x)*Math.pow(Math.abs(x), 1/3);
-        }
+        };
+        var sfInv = function(x) {
+            return Math.pow(x, 3);
+        };
 
         this.f = function f(x) {
             x = sf(x);
             x = x - sf(inputMin);
             x = x/(sf(inputMax) - sf(inputMin));
-            x = outputMin + x*(outputMax - outputMin);
+            x = x*(outputMax - outputMin);
+            x = x + outputMin;
             return x;
         };
 
-        // TODO: implement this.fInv
-        // required by tooltip overlay on xAxis
+        this.fInv = function fInv(x) {
+            x = x - outputMin;
+            x = x/(outputMax - outputMin);
+            x = x*(sf(inputMax) - sf(inputMin));
+            x = x + sf(inputMin);
+            x = sfInv(x);
+            return x;
+        };
     },
 
     input: function(min, max) {

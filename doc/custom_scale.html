@@ -65,17 +65,17 @@ Vis.blocks['my-scale'] = {
     },
 
     ticks: function(n, units) {
-        var range = (this.inputMax - this.inputMin);
+        var range = (this.outputMax - this.outputMin);
         var delta = range/n;
 
         // TODO: implement more sophisticated algorithm
         var result = [],
-            xMin = Math.ceil(this.inputMin/delta)*delta,
-            xMax = Math.floor(this.inputMax/delta)*delta,
+            xMin = Math.ceil(this.outputMin/delta)*delta,
+            xMax = Math.floor(this.outputMax/delta)*delta,
             x = xMin,
             steps = Math.round((xMax - xMin)/delta) + 1;
         for (i = 0; i < steps; ++i) {
-            result.push(x);
+            result.push(this.fInv(x));
             x += delta;
         }
 

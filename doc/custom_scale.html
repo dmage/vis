@@ -64,19 +64,84 @@ Vis.blocks['my-scale'] = {
         return undefined;
     },
 
+    /* return roundest x in [begin, end) */
+    getBestTickInRange: function(begin, end) {
+        if (begin <= 0 && end > 0) {
+            return 0;
+        }
+
+        if (begin > 0) {
+            /* searching 1, 10, 100, ... in the range */
+            var logBegin = Math.ceil(Math.log(begin)/Math.log(10)),
+                logEnd = Math.log(end)/Math.log(10);
+            if (logEnd === Math.floor(logEnd)) {
+                logEnd -= 1;
+            } else {
+                logEnd = Math.floor(logEnd);
+            }
+            if (logEnd - logBegin >= 0) {
+                return Math.pow(10, logEnd);
+            }
+
+            /* searching 20, 30, 40, ... in the range */
+            if (logBegin == logEnd + 1) {
+                var result;
+                for (var i = 1; i < 9; ++i) {
+                    var x = i*Math.pow(10, logEnd);
+                    if (begin <= x && x < end) {
+                        result = x;
+                    }
+                }
+                if (typeof result !== 'undefined') {
+                    return result;
+                }
+            }
+        } else {
+            /* searching -1, -10, -100, ... in the range */
+            var logBegin = Math.floor(Math.log(-begin)/Math.log(10)),
+                logEnd = Math.log(-end)/Math.log(10);
+            if (logEnd === Math.ceil(logEnd)) {
+                logEnd += 1;
+            } else {
+                logEnd = Math.ceil(logEnd);
+            }
+            if (logBegin - logEnd >= 0) {
+                return -Math.pow(10, logBegin);
+            }
+
+            /* searching -20, -30, -40, ... in the range */
+            if (logEnd == logBegin + 1) {
+                var result;
+                for (var i = 1; i < 9; ++i) {
+                    var x = -i*Math.pow(10, logBegin);
+                    if (begin <= x && x < end) {
+                        result = x;
+                    }
+                }
+                if (typeof result !== 'undefined') {
+                    return result;
+                }
+            }
+        }
+
+        return (begin + end)/2;
+    },
+
     ticks: function(n, units) {
         var range = (this.outputMax - this.outputMin);
         var delta = range/n;
 
-        // TODO: implement more sophisticated algorithm
         var result = [],
-            xMin = Math.ceil(this.outputMin/delta)*delta,
-            xMax = Math.floor(this.outputMax/delta)*delta,
-            x = xMin,
-            steps = Math.round((xMax - xMin)/delta) + 1;
+            outMin = this.outputMin,
+            outMax = this.outputMax,
+            out = outMin,
+            steps = n;
         for (i = 0; i < steps; ++i) {
-            result.push(this.fInv(x));
-            x += delta;
+            var begin = this.fInv(out),
+                end = this.fInv(out + delta),
+                tick = this.getBestTickInRange(begin, end);
+            result.push(tick);
+            out += delta;
         }
 
         return result;
@@ -96,8 +161,8 @@ $(function() {
                 {
                     rangeProvider: {
                         name: 'i-current-time-range-provider',
-                        period: 3600,
-                        delay: 1000
+                        period: 2*60,
+                        delay: 200
                     },
                 }
             ],
@@ -117,7 +182,7 @@ $(function() {
                 {
                     dataProvider: {
                         name: 'i-math-data-provider',
-                        step: 10,
+                        step: 0.25,
                         func: 'demo1'
                     }
                 }

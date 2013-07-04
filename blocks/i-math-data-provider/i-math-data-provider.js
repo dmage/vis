@@ -54,11 +54,11 @@ Vis.blocks['i-math-data-provider'] = {
         return { x: t, y: Math.cos(t) };
     },
 
-    sin2: function(x) {
+    sin2: function(t) {
         return { x: t, y: Math.pow(Math.sin(t), 2) };
     },
 
-    cos2: function(x) {
+    cos2: function(t) {
         return { x: t, y: Math.pow(Math.cos(t), 2) };
     },
 

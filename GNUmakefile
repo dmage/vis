@@ -21,6 +21,7 @@ BLOCKS=\
 	i-hammy-data-provider \
 	i-average-filter \
 	i-average-processor \
+	i-stacked-processor \
 	b-chart \
 	b-grid-overlay \
 	b-render-overlay \

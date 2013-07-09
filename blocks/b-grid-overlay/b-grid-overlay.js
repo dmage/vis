@@ -34,6 +34,12 @@ Vis.blocks['b-grid-overlay'] = {
         if (typeof ctx.mozDash !== 'undefined') {
             ctx.mozDash = [2, 4];
         }
+        if (typeof ctx.webkitLineDash !== 'undefined') {
+            ctx.webkitLineDash = [2, 4];
+        }
+        if (ctx.setLineDash) {
+            ctx.setLineDash([2, 4]);
+        }
 
         if (xAxis) {
             layers[0].xAxisRange = {
@@ -75,6 +81,12 @@ Vis.blocks['b-grid-overlay'] = {
 
         if (typeof ctx.mozDash !== 'undefined') {
             ctx.mozDash = null;
+        }
+        if (typeof ctx.webkitLineDash !== 'undefined') {
+            ctx.webkitLineDash = [];
+        }
+        if (ctx.setLineDash) {
+            ctx.setLineDash([]);
         }
 
         sched.next();

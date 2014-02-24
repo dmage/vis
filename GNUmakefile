@@ -19,6 +19,7 @@ BLOCKS=\
 	i-static-data-provider \
 	i-math-data-provider \
 	i-hammy-data-provider \
+	i-graphite-data-provider \
 	i-average-filter \
 	i-average-processor \
 	i-stacked-processor \

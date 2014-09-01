@@ -1,21 +1,43 @@
-module TaskScheduler {
+interface Context {
+    id?: string;
+    startTime?: Date;
+    delay?: number;
+    mask?: Array<boolean>;
+    args?: Array<any>;
+}
+
+interface Task {
+    subtasks: Array<any>;
+    context: Context;
+    reset?: boolean;
+}
+
+interface PrioBlock {
+    prio: number;
+    queue: Array<Task>;
+    revQueue: Array<Task>;
+    delayedQueue: Array<Task>;
+}
+
+class _TaskScheduler {
 "use strict";
 
-export var tasks = [];
-export var byId = {};
-export var minPrio = null;
-export var currentPrio = null;
-export var currentTask = null;
-export var lastTimeout = null;
+tasks: Array<PrioBlock> = [];
+byId = {};
+minPrio: number = null;
+currentPrio: number = null;
+currentTask: Task = null;
+lastTimeout = null;
+waitTimeout = null;
 
-export var PRIO_SYSTEM = -5;
-export var PRIO_DATA = 0;
-export var PRIO_UI = 5;
+PRIO_SYSTEM = -5;
+PRIO_DATA = 0;
+PRIO_UI = 5;
 
-export var collectTime = 10;
-export var lockTime = 50;
+collectTime = 10;
+lockTime = 50;
 
-export function _findPrioBlock(prio) {
+_findPrioBlock(prio: number): PrioBlock {
     var tasks = this.tasks;
     var prioBlock;
     for (var i = 0, l = tasks.length; i < l; ++i) {
@@ -34,18 +56,18 @@ export function _findPrioBlock(prio) {
         tasks.push(prioBlock);
     }
     return prioBlock;
-};
+}
 
-export function _isMaskReady(mask) {
+_isMaskReady(mask: Array<boolean>): boolean {
     for (var i = 0, l = mask.length; i < l; ++i) {
         if (!mask[i]) {
             return false;
         }
     }
     return true;
-};
+}
 
-export function run(prio, subtasks, context) {
+run(prio: number, subtasks: Array<Task>, context: Context): void {
     context = context || {};
     if (context.delay) {
         if (context.mask && this._isMaskReady(context.mask)) {
@@ -89,9 +111,9 @@ export function run(prio, subtasks, context) {
     if (this.currentTask === null) {
         this.waitForNextTask();
     }
-};
+}
 
-export function update(prio, subtasks, context) {
+update(prio: number, subtasks: Array<Task>, context: Context): void {
     context = context || {};
     if (context.id && this.byId[context.id]) {
         var task = this.byId[context.id];
@@ -119,10 +141,9 @@ export function update(prio, subtasks, context) {
     } else {
         this.run(prio, subtasks, context);
     }
-};
+}
 
-export function _nextTask(finished) {
-    finished = (typeof finished === 'undefined') ? true : finished;
+_nextTask(finished: boolean): boolean {
     if (finished && this.currentTask && this.currentTask.context.id) {
         delete this.byId[this.currentTask.context.id];
     }
@@ -168,9 +189,9 @@ export function _nextTask(finished) {
     this.currentPrio = prioBlock.prio;
     this.currentTask = prioBlock.revQueue.pop();
     return true;
-};
+}
 
-export function next(func) {
+next(func?): void {
     if (this.currentTask !== null && this.currentTask.reset) {
         func = (void 0);
         delete this.currentTask.reset;
@@ -193,7 +214,7 @@ export function next(func) {
     }
     if (typeof nextFunc === 'undefined') {
         while (this.currentTask === null || this.currentTask.subtasks.length === 0) {
-            if (!this._nextTask()) {
+            if (!this._nextTask(true)) {
                 break;
             }
         }
@@ -224,9 +245,9 @@ export function next(func) {
         console.log('locked for ', (+new Date() - +this.lastTimeout), 'ms');
         this.waitForNextTask();
     }
-};
+}
 
-export function _waitTimeForPrioBlock(prioBlock, now) {
+_waitTimeForPrioBlock(prioBlock: PrioBlock, now: number) {
     if (prioBlock.queue.length > 0 || prioBlock.revQueue.length > 0) {
         return null;
     }
@@ -240,9 +261,9 @@ export function _waitTimeForPrioBlock(prioBlock, now) {
         }
     }
     return waitTime;
-};
+}
 
-export function waitForNextTask() {
+waitForNextTask(): void {
     var _this = this,
         tasks = _this.tasks,
         waitTime,
@@ -274,6 +295,8 @@ export function waitForNextTask() {
             _this.next();
         }, waitTime);
     }
-};
+}
 
 }
+
+var TaskScheduler = new _TaskScheduler();

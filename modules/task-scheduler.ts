@@ -1,23 +1,21 @@
-(function(exports) {
+module TaskScheduler {
 "use strict";
 
-var TaskScheduler = {
-    tasks: [],
-    byId: {},
-    minPrio: null,
-    currentPrio: null,
-    currentTask: null,
-    lastTimeout: null,
+export var tasks = [];
+export var byId = {};
+export var minPrio = null;
+export var currentPrio = null;
+export var currentTask = null;
+export var lastTimeout = null;
 
-    PRIO_SYSTEM: -5,
-    PRIO_DATA: 0,
-    PRIO_UI: 5,
+export var PRIO_SYSTEM = -5;
+export var PRIO_DATA = 0;
+export var PRIO_UI = 5;
 
-    collectTime: 10,
-    lockTime: 50
-};
+export var collectTime = 10;
+export var lockTime = 50;
 
-TaskScheduler._findPrioBlock = function(prio) {
+export function _findPrioBlock(prio) {
     var tasks = this.tasks;
     var prioBlock;
     for (var i = 0, l = tasks.length; i < l; ++i) {
@@ -38,7 +36,7 @@ TaskScheduler._findPrioBlock = function(prio) {
     return prioBlock;
 };
 
-TaskScheduler._isMaskReady = function(mask) {
+export function _isMaskReady(mask) {
     for (var i = 0, l = mask.length; i < l; ++i) {
         if (!mask[i]) {
             return false;
@@ -47,7 +45,7 @@ TaskScheduler._isMaskReady = function(mask) {
     return true;
 };
 
-TaskScheduler.run = function(prio, subtasks, context) {
+export function run(prio, subtasks, context) {
     context = context || {};
     if (context.delay) {
         if (context.mask && this._isMaskReady(context.mask)) {
@@ -93,7 +91,7 @@ TaskScheduler.run = function(prio, subtasks, context) {
     }
 };
 
-TaskScheduler.update = function(prio, subtasks, context) {
+export function update(prio, subtasks, context) {
     context = context || {};
     if (context.id && this.byId[context.id]) {
         var task = this.byId[context.id];
@@ -123,7 +121,7 @@ TaskScheduler.update = function(prio, subtasks, context) {
     }
 };
 
-TaskScheduler._nextTask = function(finished) {
+export function _nextTask(finished) {
     finished = (typeof finished === 'undefined') ? true : finished;
     if (finished && this.currentTask && this.currentTask.context.id) {
         delete this.byId[this.currentTask.context.id];
@@ -172,7 +170,7 @@ TaskScheduler._nextTask = function(finished) {
     return true;
 };
 
-TaskScheduler.next = function(func) {
+export function next(func) {
     if (this.currentTask !== null && this.currentTask.reset) {
         func = (void 0);
         delete this.currentTask.reset;
@@ -228,7 +226,7 @@ TaskScheduler.next = function(func) {
     }
 };
 
-TaskScheduler._waitTimeForPrioBlock = function(prioBlock, now) {
+export function _waitTimeForPrioBlock(prioBlock, now) {
     if (prioBlock.queue.length > 0 || prioBlock.revQueue.length > 0) {
         return null;
     }
@@ -244,7 +242,7 @@ TaskScheduler._waitTimeForPrioBlock = function(prioBlock, now) {
     return waitTime;
 };
 
-TaskScheduler.waitForNextTask = function() {
+export function waitForNextTask() {
     var _this = this,
         tasks = _this.tasks,
         waitTime,
@@ -278,6 +276,4 @@ TaskScheduler.waitForNextTask = function() {
     }
 };
 
-exports.TaskScheduler = TaskScheduler;
-
-})(window);
+}

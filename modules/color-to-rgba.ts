@@ -1,6 +1,13 @@
-(function($) {
+module jQuery {
 
-$.colorToRgba = function(colorStr) {
+export interface RGBA {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+export function colorToRgba(colorStr): RGBA {
     var match;
 
     match = colorStr.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/);
@@ -44,6 +51,6 @@ $.colorToRgba = function(colorStr) {
     }
 
     return { r: 0, g: 0, b: 0, a: 1 };
-};
+}
 
-})(jQuery);
+}

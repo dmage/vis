@@ -1,6 +1,6 @@
-(function(Vis) {
+module Vis {
 
-Vis.binarySearch = function binarySearch(value, arr) {
+export function binarySearch<T>(value: T, arr: Array<T>) {
     var low = 0, high = arr.length - 1, mid, midValue;
 
     if (low > high) {
@@ -20,6 +20,6 @@ Vis.binarySearch = function binarySearch(value, arr) {
     }
 
     return -low - 1;
-};
+}
 
-})(Vis);
+}

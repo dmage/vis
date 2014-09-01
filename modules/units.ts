@@ -1,4 +1,4 @@
-(function(exports) {
+module Units {
 "use strict";
 
 var Units = {
@@ -10,7 +10,7 @@ var Units = {
     ]
 };
 
-Units.getPrefix = function(value, unit) {
+export function getPrefix(value, unit) {
     // ...
     return {
         value: value,
@@ -18,22 +18,22 @@ Units.getPrefix = function(value, unit) {
     };
 };
 
-Units.format = function(value, units, scale) {
+export function format(value, units, scale) {
     if (units == "unixtime") {
         var d = new Date(value*1000),
-            hh = d.getHours(),
-            mm = d.getMinutes(),
-            ss = d.getSeconds();
-        if (hh < 10) hh = "0" + hh;
-        if (mm < 10) mm = "0" + mm;
-        if (ss < 10) ss = "0" + ss;
+            hh = '' + d.getHours(),
+            mm = '' + d.getMinutes(),
+            ss = '' + d.getSeconds();
+        if (hh.length === 1) hh = "0" + hh;
+        if (mm.length === 1) mm = "0" + mm;
+        if (ss.length === 1) ss = "0" + ss;
         return hh + ":" + mm + ":" + ss;
     } else {
         return scale.format(value);
     }
 };
 
-Units.formatTicks = function(ticks, units, scale) {
+export function formatTicks(ticks, units, scale) {
     var labeledTicks = [];
     var i, l, tickValue;
 
@@ -42,7 +42,8 @@ Units.formatTicks = function(ticks, units, scale) {
             tickValue = ticks[i];
             var labeledTick = {
                 tickValue: tickValue,
-                label: this.format(tickValue, units, scale)
+                label: this.format(tickValue, units, scale),
+                extraLabel: undefined
             };
             var d = new Date(ticks[i]*1000);
             if (i === 0 || new Date(ticks[i - 1]*1000).getDate() !== d.getDate()) {
@@ -61,8 +62,6 @@ Units.formatTicks = function(ticks, units, scale) {
     }
 
     return labeledTicks;
-};
+}
 
-exports.Units = Units;
-
-})(window);
+}

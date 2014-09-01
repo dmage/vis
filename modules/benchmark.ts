@@ -1,6 +1,6 @@
-(function(Vis) {
+module Vis {
 
-Vis.benchmark = function(b, name) {
+export function benchmark(b, name) {
     if (b) {
         var now = performance.now();
         var v;
@@ -21,7 +21,7 @@ Vis.benchmark = function(b, name) {
     }
 };
 
-Vis.subbenchmark = function(b) {
+export function subbenchmark(b) {
     var prev = b.prev || b.start;
     b.sub || (b.sub = []);
     var now = performance.now();
@@ -31,4 +31,4 @@ Vis.subbenchmark = function(b) {
     b.prev = now;
 }
 
-})(window.Vis);
+}

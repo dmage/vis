@@ -1,3 +1,5 @@
+TSC=./node_modules/.bin/tsc
+
 MODULES=\
 	core \
 	uniq-id \
@@ -43,6 +45,9 @@ SOURCES_CSS=\
 
 .PHONY: all
 all: vis.js vis.css
+
+modules/%.js: modules/%.ts
+	$(TSC) $^
 
 vis.js: $(SOURCES_JS)
 	cat $^ > $@

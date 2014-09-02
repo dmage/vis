@@ -19,16 +19,20 @@ interface PrioBlock {
     delayedQueue: Array<Task>;
 }
 
+interface TasksById {
+    [index: string]: Task;
+}
+
 class _TaskScheduler {
 "use strict";
 
 tasks: Array<PrioBlock> = [];
-byId = {};
+byId: TasksById = {};
 minPrio: number = null;
 currentPrio: number = null;
 currentTask: Task = null;
-lastTimeout = null;
-waitTimeout = null;
+lastTimeout: Date = null;
+waitTimeout: number = null;
 
 PRIO_SYSTEM = -5;
 PRIO_DATA = 0;
@@ -39,7 +43,7 @@ lockTime = 50;
 
 _findPrioBlock(prio: number): PrioBlock {
     var tasks = this.tasks;
-    var prioBlock;
+    var prioBlock: PrioBlock;
     for (var i = 0, l = tasks.length; i < l; ++i) {
         if (tasks[i].prio == prio) {
             prioBlock = tasks[i];
@@ -149,7 +153,7 @@ _nextTask(finished: boolean): boolean {
     }
 
     var tasks = this.tasks;
-    var prioBlock;
+    var prioBlock: PrioBlock;
     for (var i = 0, l = tasks.length; i < l; ++i) {
         if (tasks[i].delayedQueue.length > 0) {
             var queue = tasks[i].delayedQueue,
@@ -247,12 +251,12 @@ next(func?): void {
     }
 }
 
-_waitTimeForPrioBlock(prioBlock: PrioBlock, now: number) {
+_waitTimeForPrioBlock(prioBlock: PrioBlock, now: number): number {
     if (prioBlock.queue.length > 0 || prioBlock.revQueue.length > 0) {
         return null;
     }
 
-    var waitTime;
+    var waitTime: number;
     for (var i = 0, l = prioBlock.delayedQueue.length; i < l; ++i) {
         var task = prioBlock.delayedQueue[i];
         var taskWaitTime = +task.context.startTime - now;
@@ -266,7 +270,7 @@ _waitTimeForPrioBlock(prioBlock: PrioBlock, now: number) {
 waitForNextTask(): void {
     var _this = this,
         tasks = _this.tasks,
-        waitTime,
+        waitTime: number,
         now = +new Date();
 
     for (var i = 0, l = tasks.length; i < l; ++i) {

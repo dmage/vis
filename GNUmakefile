@@ -3,7 +3,8 @@ TSC=./node_modules/.bin/tsc
 MODULES=\
 	core \
 	uniq-id \
-	task-scheduler \
+	Queue \
+	TaskScheduler \
 	units \
 	binary-search \
 	color-to-rgba \
